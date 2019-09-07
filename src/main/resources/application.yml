@@ -1,0 +1,67 @@
+server:
+  port: 17651
+spring:
+  application:
+    name: master-service
+  profiles:
+    active: '@env@'
+  http:
+    encoding:
+      force: true
+      charset: utf-8
+      enabled: true
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      enabled: true
+      max-request-size: 10MB
+  jackson:
+    default-property-inclusion: non_null
+
+logging:
+  path: logs
+  level:
+    org.springframework: info
+
+# 描述信息
+info:
+  app:
+    name: "@project.name@" #从pom.xml中获取
+    description: "@project.description@"
+    version: "@project.version@"
+    parent-version: "@project.parent.version@"
+
+  # 加载所有的端点/默认只加载了 info / health
+  # 可以关闭制定的端点
+
+management:
+  server:
+    port: 17651
+  endpoints:
+    web:
+      base-path: /actuator
+      exposure:
+        include: '*'
+    enabled-by-default: false
+  endpoint:
+    health:
+      show-details: always
+      enabled: true
+    shutdown:
+      enabled: false
+    info:
+      enabled: true
+    #    beans:
+    #      enabled: true
+    #    caches:
+    #      enabled: true
+    mappings:
+      enabled: true
+    metrics:
+      enabled: true
+    #    service-registry:
+    #      enabled: true
+    # management.endpoints.web.path-mapping.health=rest_health
+    loggers:
+      enabled: true
+

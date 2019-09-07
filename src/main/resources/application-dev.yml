@@ -1,0 +1,48 @@
+spring:
+  security:
+    user:
+      name: test
+      password: dingli
+  datasource:
+    type: com.zaxxer.hikari.HikariDataSource
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://172.16.23.152:3306/db_1?useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC
+    username: root
+    password: Fleet2011@DB.
+    hikari:
+      minimum-idle: 10
+      idle-timeout: 180000
+      maximum-pool-size: 30
+      auto-commit: true
+      pool-name: dingli-hikari
+      max-lifetime: 1800000
+      connection-timeout: 30000
+  jpa:
+    database-platform: org.hibernate.dialect.MySQLDialect
+  boot:
+    admin:
+      client:
+        url: http://${spring.security.user.name}:${spring.security.user.password}@172.16.23.151:15101
+  rabbitmq:
+    addresses: 172.16.23.154:5672
+    username: guest
+    password: guest
+    virtual-host: /
+    publisher-confirms: true
+    publisher-returns: true
+    template:
+      mandatory: true
+  quartz:
+    job-store-type: memory
+eureka:
+  client:
+    serviceUrl:
+      defaultZone: http://${spring.security.user.name}:${spring.security.user.password}@172.16.23.151:8762/eureka/, http://${spring.security.user.name}:${spring.security.user.password}@172.16.23.151:8761/eureka/
+    healthcheck:
+      enabled: true
+  instance:
+    prefer-ip-address: true
+
+xml:
+  path:
+    file:
