@@ -1,3 +1,4 @@
+## 项目结构
 ```
     项目结构:
         src.main
@@ -40,9 +41,18 @@
             -resources
                 配置文件
 ```
+## level
+
+> rcu : 10
+
+> ddib : 10
+
+> report: IA 50 IB 50 IC 50
 
 ## 项目技术要点
 > springboot + springcloud + 配合eureka 实现远程服务调用，传输数据压缩，响应时间配置
 > DataSource-> MySQL : hikari 高可用数据库连接池，配置很完美不需要更改，jpa 实现数据响应
 > rabbit mq 
-> quratz
+
+##
+> java -Xms1024m -Xmx1024m -XX:PermSize=256m -XX:MaxPermSize=512m -XX:MaxNewSize=512m -jar -Dserver.port=45632 -Dmanagement.server.port=45632 worker23451.jar

@@ -27,11 +27,17 @@ public class ReportKidJob implements Serializable {
 
     private Integer state;
 
-    private LocalDateTime startTime;
+    private Long startTime;
 
-    private LocalDateTime endTime;
+    private Long endTime;
 
     private Integer retryCount;
 
     private String exception;
+
+    private String returnValue;
+
+    private String response;
+
+    private String data;
 }

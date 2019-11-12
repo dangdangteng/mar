@@ -29,7 +29,6 @@ public class RcuConfirm {
             int i = sourceFileRepository.updateStartTimeById(2, id, localDateTime);
             log.info("source_file 更新状态: " + i);
         } else {
-            //todo: 消息压入队列 是否确保一定压入,如果无法压入这里会进入一个无限retry的状态
             log.info("异常补救...");
             if (allObject.getNum() < 3) {
                 try {

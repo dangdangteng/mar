@@ -9,6 +9,9 @@ import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * 信道处理工具
+ */
 public class ChannelUtils {
     /**
      * 获取channel

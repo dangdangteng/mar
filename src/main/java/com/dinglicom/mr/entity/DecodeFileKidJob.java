@@ -5,6 +5,7 @@ import lombok.experimental.Accessors;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
 
 @Data
@@ -27,11 +28,13 @@ public class DecodeFileKidJob implements Serializable {
 
     private Integer state;
 
-    private LocalDateTime startTime;
+    private Long startTime;
 
-    private LocalDateTime endTime;
+    private Long endTime;
 
     private Integer retryCount;
+
+    private String returnValue;
 
     private String exception;
 }

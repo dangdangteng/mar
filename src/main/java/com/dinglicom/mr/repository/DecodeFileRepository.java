@@ -33,11 +33,12 @@ public interface DecodeFileRepository extends Repository<DecodeFile, Integer>, P
     Page<DecodeFile> findAll(Pageable pageable);
 
     @Modifying
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     @Query(value = "update DecodeFile df set " +
-            "df.endDt = case when :#{#data} is null then df.endDt else :#{#data} end ," +
+            "df.endDt = case when :#{#endData} is null then df.endDt else :#{#endData} end ," +
+            "df.startDt = case when :#{#startData} is null then df.endDt else :#{#startData} end ," +
             "df.importStatus = case when :#{#importStatus} is null then df.importStatus else :#{#importStatus} end " +
             "where df.id = :#{#id}" ,nativeQuery = false)
-    int updateEndTimeById( @Param("id") int id, @Param("importStatus") Integer importStatus, @Param("data") LocalDateTime data);
+    int updateEndTimeById( @Param("id") int id, @Param("importStatus") Integer importStatus, @Param("endData") LocalDateTime endData,@Param("startData") LocalDateTime startData);
 
 }

@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Analysis Id="135424" DecodedPath="D:\新建文件夹\天馈线接反\LogData\" TempFilePath="D:\新建文件夹\天馈线接反\TempLogFiles\" ConfigFile="D:\新建文件夹\CommonDatasetConfig.ini" ResultFile="D:\新建文件夹\天馈线接反\Site.uk" UseUKProcess="true" Version="2.0.0.0">
+	<Scenes>
+		<Scene Name="天馈线接反">
+			<DataSource>
+				<Data>
+					<Item Port="2" FileName="D:\新建文件夹\天馈线接反\0-WX---2-.rcu" DeviceModel="HiSilicon MIFI E5776S-860 (1)" DecryptFile=""/>
+				</Data>
+			</DataSource>
+		</Scene>
+	</Scenes>
+	<Filter/>
+	<Field Valid="true"/>
+	<StatisticConfig>
+		<ConfigItem Name="ConfigPropertyKey_Logic_StatisticMethod" PropertyKey="501" PropertyValue="0"/>
+		<ConfigItem Name="ConfigPropertyKey_Logic_ServiceProvider" PropertyKey="502" PropertyValue="0"/>
+		<ConfigItem Name="ConfigPropertyKey_Logic_MessageLostInterval" PropertyKey="503" PropertyValue="999999"/>
+		<ConfigItem Name="ConfigPropertyKey_Logic_FTPDropMode" PropertyKey="504" PropertyValue="1"/>
+		<ConfigItem Name="ConfigPropertyKey_Logic_UserStopMode" PropertyKey="505" PropertyValue="0"/>
+		<ConfigItem Name="ConfigPropertyKey_Logic_TimeOutMode" PropertyKey="506" PropertyValue="1"/>
+		<ConfigItem Name="ConfigPropertyKey_Logic_DeviceLostMode" PropertyKey="507" PropertyValue="0"/>
+		<ConfigItem Name="ConfigPropertyKey_Logic_PPPDropMode" PropertyKey="508" PropertyValue="0"/>
+		<ConfigItem Name="ConfigPropertyKey_Logic_VoiceIgnoreDevoceLost" PropertyKey="509" PropertyValue="1"/>
+		<ConfigItem Name="ConfigPropertyKey_Logic_AbandonNoVoiceDialMOSP" PropertyKey="510" PropertyValue="0"/>
+		<ConfigItem Name="ConfigPropertyKey_Logic_BlockCallTimeout" PropertyKey="511" PropertyValue="30"/>
+		<ConfigItem Name="ConfigPropertyKey_Logic_VoiceDropByExceptionCodeOfDownDisconnectMsg" PropertyKey="500" PropertyValue="0"/>
+		<ConfigItem Name="ConfigPropertyKey_Logic_NoRCUEventVoiceSPMode" PropertyKey="512" PropertyValue="0"/>
+		<ConfigItem Name="ConfigPropertyKey_Logic_AbandonHaveAlertBeforeBlockSP" PropertyKey="513" PropertyValue="0"/>
+		<ConfigItem Name="ConfigPropertyKey_Logic_AbandonSpecialReasonExceptVoiceSP" PropertyKey="514" PropertyValue="1"/>
+		<ConfigItem Name="ConfigPropertyKey_Logic_Email70543DropMode" PropertyKey="515" PropertyValue="1"/>
+		<ConfigItem Name="ConfigPropertyKey_Logic_LastCallNotInclude" PropertyKey="520" PropertyValue="0"/>
+		<ConfigItem Name="ConfigPropertyKey_Logic_InviteBidVersion" PropertyKey="105" PropertyValue="0"/>
+		<ConfigItem Name="ConfigPropertyKey_Logic_DNSFailureOption" PropertyKey="516" PropertyValue="0"/>
+		<ConfigItem Name="ConfigPropertyKey_Logic_VoLTECallDropWhenNoEndMessage" PropertyKey="517" PropertyValue="1"/>
+		<ConfigItem Name="ConfigPropertyKey_Logic_VoLTECallEndCheckByeOKDirection" PropertyKey="519" PropertyValue="1"/>
+		<ConfigItem Name="ConfigPropertyKey_Logic_VoiceCDMAAttemptNeedOption" PropertyKey="518" PropertyValue="0"/>
+		<ConfigItem Name="ConfigPropertyKey_Logic_VoiceDropByOnlyUplinkRTPDuration" PropertyKey="521" PropertyValue="20000"/>
+		<ConfigItem Name="ConfigPropertyKey_Logic_VoiceConnectedByAlerting" PropertyKey="522" PropertyValue="0"/>
+		<ConfigItem Name="ConfigPropertyKey_Logic_VoLTEaThirdPartyCall" PropertyKey="523" PropertyValue="1"/>
+		<ConfigItem Name="ConfigPropertyKey_IsCheckGPSPointWithKMLLineDistance" PropertyKey="201" PropertyValue="0"/>
+	</StatisticConfig>
+	<ReportElement>
+		<BaseInfos>
+			<!--数据基础统计信息：统计模式支持多个,用","分隔-->
+			<BaseInfo Name="数据LOG名称" StatMode="Log" DisplayScale="1" ConditionId="1"/>
+		</BaseInfos>
+	</ReportElement>
+	<Bins/>
+	<Sites>
+		<Site FileName="D:\新建文件夹\天馈线接反\CellInfo.csv" Network="LTE">
+			<!--Field Name="Province" Alias="Province"/>
+			<Field Name="City" Alias="City"/>
+			<Field Name="District" Alias="District"/>
+			<Field Name="CellName" Alias="CellName"/>
+			<Field Name="CGI" Alias="CGI"/-->
+		</Site>
+	</Sites>
+	<Groups/>
+</Analysis>

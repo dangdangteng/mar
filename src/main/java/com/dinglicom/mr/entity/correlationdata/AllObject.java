@@ -4,6 +4,9 @@ import lombok.*;
 
 import java.io.Serializable;
 
+/**
+ * 常住内存,非我本意,设计者要求
+ */
 @Data
 @AllArgsConstructor
 @NoArgsConstructor

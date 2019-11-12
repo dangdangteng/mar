@@ -1,5 +1,6 @@
 package com.dinglicom.mr.producer.confirm;
 
+import com.dinglicom.mr.Enum.StatusEnum;
 import com.dinglicom.mr.entity.correlationdata.AllObject;
 import com.dinglicom.mr.repository.DecodeFileKidJobRepository;
 import com.dinglicom.mr.service.DDiBJobService;
@@ -20,14 +21,14 @@ public class DDIBConfirm {
     private DecodeFileKidJobRepository decodeFileKidJobRepository;
 
 
-    public void DDIBRetryAndUpdate(String correlationData, boolean ack) throws Exception {
+    public void dDIBRetryAndUpdate(String correlationData, boolean ack) throws Exception {
         ObjectMapper mapper = new ObjectMapper();
         AllObject allObject = mapper.readValue(correlationData, AllObject.class);
         Integer id = StringUtils.subToInt(allObject.getId());
         if (ack) {
             LocalDateTime localDateTime = LocalDateTime.now();
             //如果confirm返回成功 则进行更新
-            int i = decodeFileKidJobRepository.updateStartTimeById(2, id, localDateTime);
+            int i = decodeFileKidJobRepository.updateStartTimeById(2, (long)id, localDateTime, StatusEnum.getMessage(2));
             log.info("decodefilekidjob table 更新状态: " + i);
         } else {
             log.info("异常补救...");

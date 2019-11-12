@@ -270,10 +270,14 @@ public class DecodeFile implements Serializable {
      */
     private Integer importStatus;
 
+    private Integer priority;
+
     public DecodeFile(Integer id, Integer port, String filename) {
         this.id = id;
         this.port = port;
         this.fileName = filename;
     }
+
+
 
 }

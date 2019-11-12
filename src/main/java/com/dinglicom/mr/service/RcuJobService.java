@@ -1,21 +1,24 @@
 package com.dinglicom.mr.service;
 
 import com.dingli.DecodeConfig;
+import com.dingli.cloudunify.core.response.Response;
 import com.dingli.damain.TaskRequest;
 import com.dinglicom.mr.entity.SourceFile;
 import com.dinglicom.mr.entity.TaskConfig;
 import com.dinglicom.mr.entity.correlationdata.AllObject;
+import com.dinglicom.mr.handle.HandleIndexOf;
 import com.dinglicom.mr.producer.RabbitProducer;
+import com.dinglicom.mr.repository.SourceFileRepository;
 import com.dinglicom.mr.repository.TaskConfigRepository;
 import com.dinglicom.mr.response.MessageCode;
-import com.dinglicom.mr.util.ObjectToObjectUtils;
+import com.dinglicom.mr.util.TaskUtil;
 import lombok.extern.java.Log;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Optional;
 
@@ -27,11 +30,13 @@ public class RcuJobService {
     private RabbitProducer rabbitProducer;
     @Autowired
     private TaskConfigRepository taskConfigRepository;
+    @Autowired
+    private SourceFileRepository sourceFileRepository;
 
     public MessageCode rcu(int id, String filePathName, int port, Integer priority) throws Exception {
         Optional<TaskConfig> byId = taskConfigRepository.findById(1);
         SourceFile file = new SourceFile(id,filePathName, port);
-        TaskRequest taskRequest = ObjectToObjectUtils.sourceFileToTaskRequest(file, byId.get());
+        TaskRequest taskRequest = TaskUtil.sourceFileToTaskRequest(file, byId.get());
         if (taskRequest == null) {
             return new MessageCode(0, "taskconfig : 配置错误!");
         }
@@ -54,6 +59,7 @@ public class RcuJobService {
                     log.info(e.getMessage());
                 }
             });
+
             return new MessageCode(1, "解码成功! 数据已经压入队列...");
         }
         return new MessageCode(0, "未知错误: " + logger.toString());

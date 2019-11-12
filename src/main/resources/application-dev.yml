@@ -18,7 +18,7 @@ spring:
       max-lifetime: 1800000
       connection-timeout: 30000
   jpa:
-    database-platform: org.hibernate.dialect.MySQLDialect
+    database-platform: org.hibernate.dialect.MySQL5Dialect
   boot:
     admin:
       client:
@@ -32,8 +32,13 @@ spring:
     publisher-returns: true
     template:
       mandatory: true
+      retry:
+        max-attempts: 2
   quartz:
     job-store-type: memory
+  mvc:
+    async:
+      request-timeout: 300000
 eureka:
   client:
     serviceUrl:
@@ -42,7 +47,17 @@ eureka:
       enabled: true
   instance:
     prefer-ip-address: true
-
-xml:
-  path:
-    file:
+#支持配置
+import:
+    url: 172.16.23.151
+    port: 8066
+    user: root
+    password: 123456
+    datasource: fleet_test
+    clientFlag: 0
+async:
+  pool:
+    corePoolSize: 16
+    maxPoolSize: 32
+    keepAliveSeconds: 300
+    queueCapacity: 2048

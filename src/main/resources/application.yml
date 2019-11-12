@@ -1,6 +1,21 @@
 server:
   port: 17651
+  undertow:
+    max-http-post-size: 0
+    # 设置IO线程数, 它主要执行非阻塞的任务,它们会负责多个连接, 默认设置每个CPU核心一个线程,数量和CPU 内核数目一样即可
+    io-threads: 16
+    # 阻塞任务线程池, 当执行类似servlet请求阻塞操作, undertow会从这个线程池中取得线程,它的值设置取决于系统的负载  io-threads*8
+    worker-threads: 256
+    # 以下的配置会影响buffer,这些buffer会用于服务器连接的IO操作,有点类似netty的池化内存管理
+    # 每块buffer的空间大小,越小的空间被利用越充分
+    buffer-size: 1024
+    # 每个区分配的buffer数量 , 所以pool的大小是buffer-size * buffers-per-region
+    #   buffers-per-region: 1024 # 这个参数不需要写了
+    # 是否分配的直接内存
+    direct-buffers: true
 spring:
+  aop:
+    proxy-target-class: true
   application:
     name: master-service
   profiles:
@@ -17,6 +32,7 @@ spring:
       max-request-size: 10MB
   jackson:
     default-property-inclusion: non_null
+
 
 logging:
   path: logs
@@ -65,3 +81,26 @@ management:
     loggers:
       enabled: true
 
+feign:
+  httpclient:
+    connection-timeout: 300000
+    max-connections: 1000
+    time-to-live: 60000
+    enabled: true
+    max-connections-per-route: 200
+  compression:
+    request:
+      mime-types: text/xml,application/xml,application/json
+      enabled: true
+    response:
+      enabled: true
+  client:
+    config:
+      default:  # 服务名，default表示所有服务
+        connectTimeout: 10000
+        readTimeout: 600000
+        loggerLevel: full
+  okhttp:
+    enabled: false
+  hystrix:
+    enabled: true

@@ -5,6 +5,7 @@ import com.dinglicom.mr.producer.RabbitProducer;
 import com.dinglicom.mr.repository.DecodeFileRepository;
 import com.dinglicom.mr.response.MessageCode;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -19,8 +20,6 @@ public class DecodeJobService {
         if (save.getGroupId() == null ||  save.getFileName() == null){
             return new MessageCode(0,"decode: 入库失败!");
         }
-        return new MessageCode(1,"decode: 入库成功!",save);
+        return new MessageCode<DecodeFile>(1,"decode: 入库成功!",save);
     }
-//    public MessageCode test() throws  Exception{
-//    }
 }

@@ -1,14 +1,15 @@
 package com.dinglicom.mr.response;
 
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import lombok.*;
+
+import java.io.Serializable;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
 @ToString
-public class MessageCode<T> {
+public class MessageCode<T> implements Serializable {
     private int code;
     private String message;
     private T data;

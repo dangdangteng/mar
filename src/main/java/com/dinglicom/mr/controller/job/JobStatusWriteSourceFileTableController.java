@@ -29,10 +29,7 @@ public class JobStatusWriteSourceFileTableController {
 
     @RequestMapping(value = "/callBack",method = RequestMethod.POST)
     public MessageCode workCallBackMessage(@RequestParam int id, @RequestParam int statusCode, @RequestParam String ddibFileName) throws Exception {
-        MessageCode messageCode = sourceJobService.UpdateStatusAndEndTime(id, statusCode);
-        if (messageCode.getCode() == 0) {
-            return messageCode;
-        }
+        sourceJobService.updateStatusAndEndTime(id, statusCode);
         log.info(id+"----"+statusCode+"------"+ddibFileName);
         SourceFile byId = sourceJobService.findById(id);
         DecodeFile decodeFile = new DecodeFile();
@@ -48,11 +45,12 @@ public class JobStatusWriteSourceFileTableController {
         decodeFile.setTotalGpsPointCount(0);
         decodeFile.setIsDelete(0);
         decodeFile.setCreateDt(LocalDateTime.now());
-        MessageCode messageCode1 = decodeJobService.saveDecodeFile(decodeFile);
+        decodeFile.setStartDt(LocalDateTime.now());
+        MessageCode<DecodeFile> messageCode1 = decodeJobService.saveDecodeFile(decodeFile);
         if (messageCode1.getCode() != 1 || messageCode1.getData() == null) {
             return messageCode1;
         }
-        MessageCode ddib = dDiBJobService.ddib(decodeFile.getId(), decodeFile.getFileName(), decodeFile.getPort(), 20);
+        MessageCode ddib = dDiBJobService.ddib(messageCode1.getData().getId(), decodeFile.getFileName(), decodeFile.getPort(), 10);
         return ddib;
     }
 }
