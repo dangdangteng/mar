@@ -22,7 +22,7 @@ public class RcuConfirm {
     public void RcuRetryAndUpdate(String correlationData, boolean ack) throws Exception {
         ObjectMapper mapper = new ObjectMapper();
         AllObject allObject = mapper.readValue(correlationData, AllObject.class);
-        Integer id = StringUtils.subToInt(allObject.getId());
+        Long id = Long.valueOf(allObject.getId());
         if (ack) {
             LocalDateTime localDateTime = LocalDateTime.now();
             //如果confirm返回成功 则进行更新

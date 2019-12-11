@@ -1,6 +1,6 @@
 package com.dinglicom.mr.repository;
 
-import com.dinglicom.mr.entity.DecodeFile;
+import com.dinglicom.mr.entity.DecodeFileEntity;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Modifying;
@@ -15,26 +15,26 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
-public interface DecodeFileRepository extends Repository<DecodeFile, Integer>, PagingAndSortingRepository<DecodeFile, Integer>, CrudRepository<DecodeFile, Integer> {
-    Optional<DecodeFile> findAllById(int id);
+public interface DecodeFileRepository extends Repository<DecodeFileEntity, Long>, PagingAndSortingRepository<DecodeFileEntity, Long>, CrudRepository<DecodeFileEntity, Long> {
+    Optional<DecodeFileEntity> findAllById(int id);
 
     @Override
-    DecodeFile save(DecodeFile entity);
+    DecodeFileEntity save(DecodeFileEntity entity);
 
     @Override
-    <S extends DecodeFile> Iterable<S> saveAll(Iterable<S> entities);
+    <S extends DecodeFileEntity> Iterable<S> saveAll(Iterable<S> entities);
 
-    DecodeFile findById(int id);
-
-    @Override
-    List<DecodeFile> findAll();
+    DecodeFileEntity findById(int id);
 
     @Override
-    Page<DecodeFile> findAll(Pageable pageable);
+    List<DecodeFileEntity> findAll();
+
+    @Override
+    Page<DecodeFileEntity> findAll(Pageable pageable);
 
     @Modifying
     @Transactional(rollbackFor = Exception.class)
-    @Query(value = "update DecodeFile df set " +
+    @Query(value = "update DecodeFileEntity df set " +
             "df.endDt = case when :#{#endData} is null then df.endDt else :#{#endData} end ," +
             "df.startDt = case when :#{#startData} is null then df.endDt else :#{#startData} end ," +
             "df.importStatus = case when :#{#importStatus} is null then df.importStatus else :#{#importStatus} end " +

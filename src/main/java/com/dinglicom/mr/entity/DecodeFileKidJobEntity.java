@@ -5,6 +5,7 @@ import lombok.experimental.Accessors;
 
 import javax.persistence.*;
 import java.io.Serializable;
+import java.sql.Timestamp;
 import java.time.LocalDateTime;
 
 @Data
@@ -15,13 +16,13 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-@Table(name = "report_kid_job")
-public class ReportKidJob implements Serializable {
+@Table(name = "decode_file_kid_job")
+public class DecodeFileKidJobEntity implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private Integer taskId;
+    private Long taskId;
 
     private Integer level;
 
@@ -33,11 +34,7 @@ public class ReportKidJob implements Serializable {
 
     private Integer retryCount;
 
-    private String exception;
-
     private String returnValue;
 
-    private String response;
-
-    private String data;
+    private String exception;
 }

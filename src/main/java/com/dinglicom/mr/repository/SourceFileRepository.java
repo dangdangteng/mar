@@ -1,6 +1,6 @@
 package com.dinglicom.mr.repository;
 
-import com.dinglicom.mr.entity.SourceFile;
+import com.dinglicom.mr.entity.SourceFileEntity;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Modifying;
@@ -16,98 +16,98 @@ import java.util.List;
 import java.util.Optional;
 
 
-public interface SourceFileRepository extends Repository<SourceFile, Integer>, PagingAndSortingRepository<SourceFile, Integer> {
-    Optional<SourceFile> findSourceFileById(int id);
+public interface SourceFileRepository extends Repository<SourceFileEntity, Long>, PagingAndSortingRepository<SourceFileEntity, Long> {
+    Optional<SourceFileEntity> findSourceFileById(Long id);
 
-    Optional<SourceFile> findSourceFileByFilename(String filename);
+    Optional<SourceFileEntity> findSourceFileByFilename(String filename);
 
-    Optional<SourceFile> findSourceFileByIndexId(int indexid);
-
-    @Override
-    List<SourceFile> findAll();
+    Optional<SourceFileEntity> findSourceFileByIndexId(int indexid);
 
     @Override
-    Page<SourceFile> findAll(Pageable pageable);
+    List<SourceFileEntity> findAll();
 
-    Page<SourceFile> findAllByStatus(int status, Pageable pageable);
+    @Override
+    Page<SourceFileEntity> findAll(Pageable pageable);
 
-    @Modifying
-    @Transactional
-    @Query("update SourceFile sf set sf.status = 2, sf.startDt = :#{#data} where sf.id = :#{#id}")
-    int updateStartTimeById(@Param("id") int id, @Param("data") LocalDateTime data);
+    Page<SourceFileEntity> findAllByStatus(int status, Pageable pageable);
 
     @Modifying
     @Transactional
-    @Query("update SourceFile sf set sf.status = 4, sf.endDt = :#{#data} where sf.id = :#{#id}")
-    int updateStatusAndEndDtByID(@Param("id") int id, @Param("data") LocalDate data);
+    @Query("update SourceFileEntity sf set sf.status = 2, sf.startDt = :#{#data} where sf.id = :#{#id}")
+    int updateStartTimeById(@Param("id") Long id, @Param("data") LocalDateTime data);
 
     @Modifying
     @Transactional
-    @Query("update SourceFile sf set " +
-            "sf.groupId = CASE WHEN :#{#sourceFile.groupId} IS NULL THEN sf.groupId ELSE :#{#sourceFile.groupId} END ," +
-            "sf.deviceId = case when :#{#sourceFile.groupId} is null then sf.deviceId else :#{#sourceFile.deviceId} end ," +
-            "sf.testPointId = case when :#{#sourceFile.testPointId} is null then sf.testPointId else :#{#sourceFile.testPointId} end ," +
-            "sf.indexId = case when :#{#sourceFile.indexId} is null then sf.indexId else :#{#sourceFile.indexId} end ," +
-            "sf.fileSize = case when :#{#sourceFile.fileSize} is null then sf.fileSize else :#{#sourceFile.fileSize} end ," +
-            "sf.filePathName = case when :#{#sourceFile.filePathName} is null then sf.filePathName else :#{#sourceFile.filePathName} end ," +
-            "sf.systemServiceId = case when :#{#sourceFile.systemServiceId} is null then sf.systemServiceId else :#{#sourceFile.systemServiceId} end ," +
-            "sf.creator = case when :#{#sourceFile.creator} is null then sf.creator else :#{#sourceFile.creator} end ," +
-            "sf.createDt = case when :#{#sourceFile.createDt} is null then sf.createDt else :#{#sourceFile.createDt} end ," +
-            "sf.status = case when :#{#sourceFile.status} is null then sf.status else :#{#sourceFile.status} end ," +
-            "sf.tag = case when :#{#sourceFile.tag} is null then sf.tag else :#{#sourceFile.tag} end ," +
-            "sf.dataType = case when :#{#sourceFile.dataType} is null then sf.dataType else :#{#sourceFile.dataType} end ," +
-            "sf.deviceType = case when :#{#sourceFile.deviceType} is null then sf.deviceType else :#{#sourceFile.deviceType} end ," +
-            "sf.validateResult = case when :#{#sourceFile.validateResult} is null then sf.validateResult else :#{#sourceFile.validateResult} end ," +
-            "sf.isDel = case when :#{#sourceFile.isDel} is null then sf.isDel else :#{#sourceFile.isDel} end ," +
-            "sf.testInformation = case when :#{#sourceFile.testInformation} is null then sf.testInformation else :#{#sourceFile.testInformation} end ," +
-            "sf.workItemId = case when :#{#sourceFile.workItemId} is null then sf.workItemId else :#{#sourceFile.workItemId} end ," +
-            "sf.startDt = case when :#{#sourceFile.startDt} is null then sf.startDt else :#{#sourceFile.startDt} end ," +
-            "sf.endDt = case when :#{#sourceFile.endDt} is null then sf.endDt else :#{#sourceFile.endDt} end ," +
-            "sf.filenameAlias = case when :#{#sourceFile.filenameAlias} is null then sf.filenameAlias else :#{#sourceFile.filenameAlias} end ," +
-            "sf.port = case when :#{#sourceFile.port} is null then sf.port else :#{#sourceFile.port} end ," +
-            "sf.filename = case when :#{#sourceFile.filename} is null then sf.filename else :#{#sourceFile.filename} end ," +
-            "sf.isSkipped = case when :#{#sourceFile.isSkipped} is null then sf.isSkipped else :#{#sourceFile.isSkipped} end ," +
-            "sf.tagProtocol = case when :#{#sourceFile.tagProtocol} is null then sf.tagProtocol else :#{#sourceFile.tagProtocol} end , " +
-            "sf.decodeFileCount = case when :#{#sourceFile.decodeFileCount} is null then sf.decodeFileCount else :#{#sourceFile.decodeFileCount} end , " +
-            "sf.decodeServiceId = case when :#{#sourceFile.decodeServiceId} is null then sf.decodeServiceId else :#{#sourceFile.decodeServiceId} end , " +
-            "sf.testplanVersion = case when :#{#sourceFile.testplanVersion} is null then sf.testplanVersion else :#{#sourceFile.testplanVersion} end , " +
-            "sf.isAnalyzed = case when :#{#sourceFile.isAnalyzed} is null then sf.isAnalyzed else :#{#sourceFile.isAnalyzed} end , " +
-            "sf.isAbnormal = case when :#{#sourceFile.isAbnormal} is null then sf.isAbnormal else :#{#sourceFile.isAbnormal} end , " +
-            "sf.abnormalCh = case when :#{#sourceFile.abnormalCh} is null then sf.abnormalCh else :#{#sourceFile.abnormalCh} end , " +
-            "sf.abnormalEn = case when :#{#sourceFile.abnormalEn} is null then sf.abnormalEn else :#{#sourceFile.abnormalEn} end , " +
-            "sf.testplanName = case when :#{#sourceFile.testplanName} is null then sf.testplanName else :#{#sourceFile.testplanName} end , " +
-            "sf.originalFileHash = case when :#{#sourceFile.originalFileHash} is null then sf.originalFileHash else :#{#sourceFile.originalFileHash} end , " +
-            "sf.roadId = case when :#{#sourceFile.roadId} is null then sf.roadId else :#{#sourceFile.roadId} end , " +
-            "sf.postCompensation = case when :#{#sourceFile.postCompensation} is null then sf.postCompensation else :#{#sourceFile.postCompensation} end , " +
-            "sf.vendor = case when :#{#sourceFile.vendor} is null then sf.vendor else :#{#sourceFile.vendor} end , " +
-            "sf.testScenario = case when :#{#sourceFile.testScenario} is null then sf.testScenario else :#{#sourceFile.testScenario} end , " +
-            "sf.testType = case when :#{#sourceFile.testType} is null then sf.testType else :#{#sourceFile.testType} end , " +
-            "sf.tester = case when :#{#sourceFile.tester} is null then sf.tester else :#{#sourceFile.tester} end , " +
-            "sf.namingRuleId = case when :#{#sourceFile.namingRuleId} is null then sf.namingRuleId else :#{#sourceFile.namingRuleId} end , " +
-            "sf.cellId = case when :#{#sourceFile.cellId} is null then sf.cellId else :#{#sourceFile.cellId} end , " +
-            "sf.metroId = case when :#{#sourceFile.metroId} is null then sf.metroId else :#{#sourceFile.metroId} end , " +
-            "sf.metroTimeTable = case when :#{#sourceFile.metroTimeTable} is null then sf.metroTimeTable else :#{#sourceFile.metroTimeTable} end  " +
-            "where sf.id = :#{#sourceFile.id}")
-    int update(@Param("sourceFile") SourceFile sourceFile);
-
-    int deleteById(int id);
-
-    Optional<SourceFile> findByFilePathNameAndPort(int port, String filePathName);
+    @Query("update SourceFileEntity sf set sf.status = 4, sf.endDt = :#{#data} where sf.id = :#{#id}")
+    int updateStatusAndEndDtByID(@Param("id") Long id, @Param("data") LocalDate data);
 
     @Modifying
     @Transactional
-    @Query(value = "update SourceFile sf set " +
+    @Query("update SourceFileEntity sf set " +
+            "sf.groupId = CASE WHEN :#{#sourceFileEntity.groupId} IS NULL THEN sf.groupId ELSE :#{#sourceFileEntity.groupId} END ," +
+            "sf.deviceId = case when :#{#sourceFileEntity.groupId} is null then sf.deviceId else :#{#sourceFileEntity.deviceId} end ," +
+            "sf.testPointId = case when :#{#sourceFileEntity.testPointId} is null then sf.testPointId else :#{#sourceFileEntity.testPointId} end ," +
+            "sf.indexId = case when :#{#sourceFileEntity.indexId} is null then sf.indexId else :#{#sourceFileEntity.indexId} end ," +
+            "sf.fileSize = case when :#{#sourceFileEntity.fileSize} is null then sf.fileSize else :#{#sourceFileEntity.fileSize} end ," +
+            "sf.filePathName = case when :#{#sourceFileEntity.filePathName} is null then sf.filePathName else :#{#sourceFileEntity.filePathName} end ," +
+            "sf.systemServiceId = case when :#{#sourceFileEntity.systemServiceId} is null then sf.systemServiceId else :#{#sourceFileEntity.systemServiceId} end ," +
+            "sf.creator = case when :#{#sourceFileEntity.creator} is null then sf.creator else :#{#sourceFileEntity.creator} end ," +
+            "sf.createDt = case when :#{#sourceFileEntity.createDt} is null then sf.createDt else :#{#sourceFileEntity.createDt} end ," +
+            "sf.status = case when :#{#sourceFileEntity.status} is null then sf.status else :#{#sourceFileEntity.status} end ," +
+            "sf.tag = case when :#{#sourceFileEntity.tag} is null then sf.tag else :#{#sourceFileEntity.tag} end ," +
+            "sf.dataType = case when :#{#sourceFileEntity.dataType} is null then sf.dataType else :#{#sourceFileEntity.dataType} end ," +
+            "sf.deviceType = case when :#{#sourceFileEntity.deviceType} is null then sf.deviceType else :#{#sourceFileEntity.deviceType} end ," +
+            "sf.validateResult = case when :#{#sourceFileEntity.validateResult} is null then sf.validateResult else :#{#sourceFileEntity.validateResult} end ," +
+            "sf.isDel = case when :#{#sourceFileEntity.isDel} is null then sf.isDel else :#{#sourceFileEntity.isDel} end ," +
+            "sf.testInformation = case when :#{#sourceFileEntity.testInformation} is null then sf.testInformation else :#{#sourceFileEntity.testInformation} end ," +
+            "sf.workItemId = case when :#{#sourceFileEntity.workItemId} is null then sf.workItemId else :#{#sourceFileEntity.workItemId} end ," +
+            "sf.startDt = case when :#{#sourceFileEntity.startDt} is null then sf.startDt else :#{#sourceFileEntity.startDt} end ," +
+            "sf.endDt = case when :#{#sourceFileEntity.endDt} is null then sf.endDt else :#{#sourceFileEntity.endDt} end ," +
+            "sf.filenameAlias = case when :#{#sourceFileEntity.filenameAlias} is null then sf.filenameAlias else :#{#sourceFileEntity.filenameAlias} end ," +
+            "sf.port = case when :#{#sourceFileEntity.port} is null then sf.port else :#{#sourceFileEntity.port} end ," +
+            "sf.filename = case when :#{#sourceFileEntity.filename} is null then sf.filename else :#{#sourceFileEntity.filename} end ," +
+            "sf.isSkipped = case when :#{#sourceFileEntity.isSkipped} is null then sf.isSkipped else :#{#sourceFileEntity.isSkipped} end ," +
+            "sf.tagProtocol = case when :#{#sourceFileEntity.tagProtocol} is null then sf.tagProtocol else :#{#sourceFileEntity.tagProtocol} end , " +
+            "sf.decodeFileCount = case when :#{#sourceFileEntity.decodeFileCount} is null then sf.decodeFileCount else :#{#sourceFileEntity.decodeFileCount} end , " +
+            "sf.decodeServiceId = case when :#{#sourceFileEntity.decodeServiceId} is null then sf.decodeServiceId else :#{#sourceFileEntity.decodeServiceId} end , " +
+            "sf.testplanVersion = case when :#{#sourceFileEntity.testplanVersion} is null then sf.testplanVersion else :#{#sourceFileEntity.testplanVersion} end , " +
+            "sf.isAnalyzed = case when :#{#sourceFileEntity.isAnalyzed} is null then sf.isAnalyzed else :#{#sourceFileEntity.isAnalyzed} end , " +
+            "sf.isAbnormal = case when :#{#sourceFileEntity.isAbnormal} is null then sf.isAbnormal else :#{#sourceFileEntity.isAbnormal} end , " +
+            "sf.abnormalCh = case when :#{#sourceFileEntity.abnormalCh} is null then sf.abnormalCh else :#{#sourceFileEntity.abnormalCh} end , " +
+            "sf.abnormalEn = case when :#{#sourceFileEntity.abnormalEn} is null then sf.abnormalEn else :#{#sourceFileEntity.abnormalEn} end , " +
+            "sf.testplanName = case when :#{#sourceFileEntity.testplanName} is null then sf.testplanName else :#{#sourceFileEntity.testplanName} end , " +
+            "sf.originalFileHash = case when :#{#sourceFileEntity.originalFileHash} is null then sf.originalFileHash else :#{#sourceFileEntity.originalFileHash} end , " +
+            "sf.roadId = case when :#{#sourceFileEntity.roadId} is null then sf.roadId else :#{#sourceFileEntity.roadId} end , " +
+            "sf.postCompensation = case when :#{#sourceFileEntity.postCompensation} is null then sf.postCompensation else :#{#sourceFileEntity.postCompensation} end , " +
+            "sf.vendor = case when :#{#sourceFileEntity.vendor} is null then sf.vendor else :#{#sourceFileEntity.vendor} end , " +
+            "sf.testScenario = case when :#{#sourceFileEntity.testScenario} is null then sf.testScenario else :#{#sourceFileEntity.testScenario} end , " +
+            "sf.testType = case when :#{#sourceFileEntity.testType} is null then sf.testType else :#{#sourceFileEntity.testType} end , " +
+            "sf.tester = case when :#{#sourceFileEntity.tester} is null then sf.tester else :#{#sourceFileEntity.tester} end , " +
+            "sf.namingRuleId = case when :#{#sourceFileEntity.namingRuleId} is null then sf.namingRuleId else :#{#sourceFileEntity.namingRuleId} end , " +
+            "sf.cellId = case when :#{#sourceFileEntity.cellId} is null then sf.cellId else :#{#sourceFileEntity.cellId} end , " +
+            "sf.metroId = case when :#{#sourceFileEntity.metroId} is null then sf.metroId else :#{#sourceFileEntity.metroId} end , " +
+            "sf.metroTimeTable = case when :#{#sourceFileEntity.metroTimeTable} is null then sf.metroTimeTable else :#{#sourceFileEntity.metroTimeTable} end  " +
+            "where sf.id = :#{#sourceFileEntity.id}")
+    int update(@Param("sourceFileEntity") SourceFileEntity sourceFileEntity);
+
+    void deleteById(Long id);
+
+    Optional<SourceFileEntity> findByFilePathNameAndPort(int port, String filePathName);
+
+    @Modifying
+    @Transactional
+    @Query(value = "update SourceFileEntity sf set " +
             "sf.status = case when :#{#status} is null then sf.status else :#{#status} end , " +
             "sf.startDt = case when :#{#data} is null then sf.startDt else :#{#data} end " +
             "where sf.id = :#{#id}" ,nativeQuery = false)
-    int updateStartTimeById(@Param("status")int status,@Param("id") int id, @Param("data") LocalDateTime data);
+    int updateStartTimeById(@Param("status")int status,@Param("id") Long id, @Param("data") LocalDateTime data);
 
     @Modifying
     @Transactional
-    @Query(value = "update SourceFile sf set " +
+    @Query(value = "update SourceFileEntity sf set " +
             "sf.status = case when :#{#status} is null then sf.status else :#{#status} end , " +
             "sf.endDt = case when :#{#data} is null then sf.endDt else :#{#data} end " +
             "where sf.id = :#{#id}", nativeQuery = false)
-    int updateStatusAndEndDtById(@Param("status") int status, @Param("id") int id, @Param("data") LocalDateTime data);
+    int updateStatusAndEndDtById(@Param("status") int status, @Param("id") Long id, @Param("data") LocalDateTime data);
 
 }

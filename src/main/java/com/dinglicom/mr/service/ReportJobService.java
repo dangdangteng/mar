@@ -8,8 +8,8 @@ import com.dingli.fillReport.FillReport;
 import com.dingli.merger.Merger;
 import com.dingli.simplifyStatistics.SimplifyStatistics;
 import com.dinglicom.mr.Enum.StatusEnum;
-import com.dinglicom.mr.entity.ReportKidJob;
-import com.dinglicom.mr.entity.TaskConfig;
+import com.dinglicom.mr.entity.ReportKidJobEntity;
+import com.dinglicom.mr.entity.TaskConfigEntity;
 import com.dinglicom.mr.entity.correlationdata.AllObject;
 import com.dinglicom.mr.feign.CloudUnifyRedisFeign;
 import com.dinglicom.mr.feign.CloudunifyAdminFeign;
@@ -62,7 +62,7 @@ public class ReportJobService{
      */
     @Async
     public MessageCode reportJobI(ReportDto reportDto, int id, Integer priority) throws Exception {
-        Optional<TaskConfig> byId = taskConfigRepository.findById(300);
+        Optional<TaskConfigEntity> byId = taskConfigRepository.findById(300);
         log.info("=============" + id);
         /**
          * 一级任务
@@ -75,7 +75,8 @@ public class ReportJobService{
         }
         log.info("*elementAttribute : " + elementAttribute.toString() + "-----------");
         List errorList = new ArrayList();
-        Response response1 = cloudUnifyRedisFeign.addNum(elementAttribute.size()+"", id + "IA");
+        List<AllObject> successList = new ArrayList();
+        Response response1 = cloudUnifyRedisFeign.addNum(elementAttribute.size() + "", id + "ALL");
         elementAttribute.stream().forEach(elementAttribute2 -> {
             if (StringUtils.isEmpty(elementAttribute2.getItemAttributeVal().getFileName())) {
                 log.info("数据源ddib文件为空");
@@ -85,57 +86,66 @@ public class ReportJobService{
             reportI.add(elementAttribute2.getCommonAttributeVal().getResultFile());
             SimplifyStatistics simplifyStatistics = new SimplifyStatistics();
             log.info(elementAttribute2.toString() + "----" + elementAttribute2.getCommonAttributeVal().toString() + "--------" + elementAttribute2.getItemAttributeVal().toString());
-            ArrayList simplifyList = new ArrayList();
+            ArrayList<String> simplifyList = new ArrayList();
             Boolean simplifyStatisticRequestFile = null;
             try {
                 simplifyStatisticRequestFile = simplifyStatistics.getSimplifyStatisticRequestFile(elementAttribute2, simplifyList);
             } catch (Exception e) {
-                log.info("调超强任务接口失败!"+e.toString());
+                errorList.add(elementAttribute2.toString());
+                log.info("调超强任务接口失败!" + e.toString());
             }
+            String yi = simplifyList.get(0);
             if (simplifyStatisticRequestFile) {
-                simplifyList.parallelStream().forEach(o -> {
-                    try {
-                        ReportKidJob reportKidJob = new ReportKidJob();
-                        reportKidJob.setLevel(1);
-                        reportKidJob.setState(1);
-                        reportKidJob.setException(StatusEnum.getMessage(1));
-                        reportKidJob.setRetryCount(0);
-                        reportKidJob.setReturnValue(o + "");
-                        reportKidJob.setStartTime(System.currentTimeMillis());
-                        reportKidJob.setEndTime(null);
-                        reportKidJob.setTaskId(id);
-                        reportKidJob.setResponse(elementAttribute2.getCommonAttributeVal().getResultFile());
-                        String s = mapper.writeValueAsString(reportKidJob);
-                        Response response = cloudUnifyRedisFeign.addString(s, id + "|report1");
-                        log.info("SimplifyStatistics 入库成功 ：...." + response.toString() + "gg");
-                        AllObject allObject = new AllObject();
-                        allObject.setId("REPORT-IA|" + response.getData().toString());
-                        allObject.setPort(reportDto.getData().get(1).getPort());
-                        allObject.setFilePathName(reportDto.getData().get(1).getFileName());
-                        allObject.setObj(o + ":" + "REPORT-IA|" + response.getData().toString());
-                        allObject.setNum(0);
-                        log.info(allObject.toString() + "这个对象是空吗");
-                        rabbitProducer.send(allObject, allObject.getObj(), priority == null ? 50 : priority, true);
-                        log.info("消息压入队列: ...");
-                    } catch (Exception e) {
-                        log.info("I 级别任务出错 ：" + e.getMessage() + e.toString());
-                    }
-                });
-            } else {
-                return;
+                try {
+                    ReportKidJobEntity reportKidJobEntity = new ReportKidJobEntity();
+                    reportKidJobEntity.setLevel(1);
+                    reportKidJobEntity.setState(1);
+                    reportKidJobEntity.setException(StatusEnum.getMessage(1));
+                    reportKidJobEntity.setRetryCount(0);
+                    reportKidJobEntity.setReturnValue(yi);
+                    reportKidJobEntity.setStartTime(System.currentTimeMillis());
+                    reportKidJobEntity.setEndTime(null);
+                    reportKidJobEntity.setTaskId((long) id);
+                    reportKidJobEntity.setResponse(elementAttribute2.getCommonAttributeVal().getResultFile());
+                    String s = mapper.writeValueAsString(reportKidJobEntity);
+                    Response response = cloudUnifyRedisFeign.addString(s, id + "|report1");
+                    log.info("SimplifyStatistics 入库成功 ：...." + response.toString());
+                    AllObject allObject = new AllObject();
+                    allObject.setId("REPORT-IA|" + response.getData().toString());
+                    allObject.setPort(reportDto.getData().get(0).getPort());
+                    allObject.setFilePathName(reportDto.getData().get(0).getFileName());
+                    allObject.setObj(yi + ":" + "REPORT-IA|" + response.getData().toString());
+                    allObject.setNum(0);
+                    successList.add(allObject);
+                } catch (Exception e) {
+                    log.info("I 级别任务出错 ：" + e.getMessage() + e.toString());
+                }
             }
         });
+        log.info("下发任务实际数量::" + elementAttribute.size());
+        log.info("失败的任务数量::" + errorList.size());
+        log.info("真实任务成功数量::" + successList.size());
         /**
          * 校验1级任务的合法性
          */
-        if (elementAttribute.size() == errorList.size()) {
-            ReportKidJob reportKidJob = new ReportKidJob();
-            reportKidJob.setException("没有读取到文件名称");
-            reportKidJob.setStartTime(System.currentTimeMillis());
-            reportKidJobRepository.save(reportKidJob);
+        if ((errorList.size() / elementAttribute.size()) > 0.2) {
+            ReportKidJobEntity reportKidJobEntity = new ReportKidJobEntity();
+            reportKidJobEntity.setException("数据源文件存在问题");
+            reportKidJobEntity.setStartTime(System.currentTimeMillis());
+            reportKidJobRepository.save(reportKidJobEntity);
             log.info("数据源文件存在问题...");
             return new MessageCode(0, "数据源文件存在问题...");
         }
+        Response response2 = cloudUnifyRedisFeign.addNum(successList.size() + "", id + "IA");
+        Response response3 = cloudUnifyRedisFeign.addNum(errorList.size() + "", id + "F");
+        successList.parallelStream().forEach(allObject -> {
+            try {
+                rabbitProducer.send(allObject, allObject.getObj(), priority == null ? 50 : priority, true);
+            } catch (Exception e) {
+                log.info("1级任务入队列失败!" + e.toString() + ";任务内容:" + allObject.toString());
+            }
+        });
+
         /**
          * 二级任务
          */
@@ -145,59 +155,59 @@ public class ReportJobService{
         }
         log.info("**elementAttributeForII :" + elementAttributeForII.toString());
         Merger merger = new Merger();
-        ArrayList mergerList = new ArrayList();
+        ArrayList<String> mergerList = new ArrayList();
         boolean mergerRequestFile = merger.getMergerRequestFile(elementAttributeForII, mergerList);
-        ReportKidJob reportKidJob = new ReportKidJob();
+        ReportKidJobEntity reportKidJobEntity = new ReportKidJobEntity();
         List jobList = new ArrayList();
-        if (mergerRequestFile) {
-            mergerList.stream().forEach(o -> {
-                reportKidJob.setLevel(2);
-                reportKidJob.setState(1);
-                reportKidJob.setException(StatusEnum.getMessage(1));
-                reportKidJob.setRetryCount(0);
-                reportKidJob.setReturnValue(o + "");
-                reportKidJob.setStartTime(System.currentTimeMillis());
-                reportKidJob.setEndTime(null);
-                reportKidJob.setResponse(elementAttributeForII.getCommonAttributeVal().getResultFile());
-                reportKidJob.setTaskId(id);
-//                ReportKidJob save = reportKidJobRepository.save(reportKidJob);
-                try {
-                    String s = mapper.writeValueAsString(reportKidJob);
-                    Response<String> response = cloudUnifyRedisFeign.addString(s, id + "|report2");
-                    log.info("merger 入库成功 ：...." + response.toString());
-                } catch (Exception e) {
-                    log.info("redis : " + e.getMessage());
-                }
-            });
-        } else {
+        if (!mergerRequestFile) {
             return new MessageCode(0, elementAttributeForII.toString());
         }
 
-        StatisticalReportRequest elementAttributeForIII = TaskUtil.getStatisticalReportRequestForIII(byId.get(), reportKidJob, reportDto, id);
-        FillReport report = new FillReport();
-        ArrayList reportList = new ArrayList();
-        boolean fillRequestFile = report.getFillRequestFile(elementAttributeForIII, reportList);
-        if (fillRequestFile) {
-            reportList.parallelStream().forEach(o -> {
-                ReportKidJob reportKidJob1 = new ReportKidJob();
-                reportKidJob1.setLevel(3);
-                reportKidJob1.setState(1);
-                reportKidJob1.setException(StatusEnum.getMessage(1));
-                reportKidJob1.setRetryCount(0);
-                reportKidJob1.setReturnValue(o + "");
-                reportKidJob1.setStartTime(System.currentTimeMillis());
-                reportKidJob1.setEndTime(null);
-                reportKidJob1.setResponse(elementAttributeForIII.getCommonAttributeVal().getResultFile());
-                reportKidJob1.setTaskId(id);
-                try {
-                    Response<String> response = cloudUnifyRedisFeign.addString(mapper.writeValueAsString(reportKidJob1), id + "|report3");
-                    log.info("FillReport 入库成功 ：...." + response.toString());
-                } catch (Exception e) {
-                    log.info("redis 3 :" + e.getMessage());
-                }
-            });
+        String er = mergerList.get(0);
+        reportKidJobEntity.setLevel(2);
+        reportKidJobEntity.setState(1);
+        reportKidJobEntity.setException(StatusEnum.getMessage(1));
+        reportKidJobEntity.setRetryCount(0);
+        reportKidJobEntity.setReturnValue(er);
+        reportKidJobEntity.setStartTime(System.currentTimeMillis());
+        reportKidJobEntity.setEndTime(null);
+        reportKidJobEntity.setResponse(elementAttributeForII.getCommonAttributeVal().getResultFile());
+        reportKidJobEntity.setTaskId((long) id);
+        try {
+            String s = mapper.writeValueAsString(reportKidJobEntity);
+            Response<String> response = cloudUnifyRedisFeign.addString(s, id + "|report2");
+            log.info("merger 入库成功 ：...." + response.toString());
+        } catch (Exception e) {
+            log.info("redis : " + e.getMessage());
         }
-//        }
+        /*
+            三级任务
+         */
+        StatisticalReportRequest elementAttributeForIII = TaskUtil.getStatisticalReportRequestForIII(byId.get(), reportKidJobEntity, reportDto, id);
+        FillReport report = new FillReport();
+        ArrayList<String> reportList = new ArrayList();
+        boolean fillRequestFile = report.getFillRequestFile(elementAttributeForIII, reportList);
+        if (!fillRequestFile) {
+            return new MessageCode(0, "三级任务拆分失败fillrequestfile" + fillRequestFile);
+        }
+
+        String san = reportList.get(0);
+        ReportKidJobEntity reportKidJobEntity1 = new ReportKidJobEntity();
+        reportKidJobEntity1.setLevel(3);
+        reportKidJobEntity1.setState(1);
+        reportKidJobEntity1.setException(StatusEnum.getMessage(1));
+        reportKidJobEntity1.setRetryCount(0);
+        reportKidJobEntity1.setReturnValue(san);
+        reportKidJobEntity1.setStartTime(System.currentTimeMillis());
+        reportKidJobEntity1.setEndTime(null);
+        reportKidJobEntity1.setResponse(elementAttributeForIII.getCommonAttributeVal().getResultFile());
+        reportKidJobEntity1.setTaskId((long) id);
+        try {
+            Response<String> response = cloudUnifyRedisFeign.addString(mapper.writeValueAsString(reportKidJobEntity1), id + "|report3");
+            log.info("FillReport 入库成功 ：...." + response.toString());
+        } catch (Exception e) {
+            log.info("redis 3 :" + e.getMessage());
+        }
         ReportTask reportTask = new ReportTask();
         reportTask.setId(id);
         reportTask.setStatus(2);

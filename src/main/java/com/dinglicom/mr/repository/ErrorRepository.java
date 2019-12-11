@@ -1,13 +1,13 @@
 package com.dinglicom.mr.repository;
 
-import com.dinglicom.mr.entity.Error;
+import com.dinglicom.mr.entity.ErrorEntity;
 import org.springframework.data.repository.PagingAndSortingRepository;
 import org.springframework.data.repository.Repository;
 
-public interface ErrorRepository extends Repository<Error,Long>, PagingAndSortingRepository<Error,Long> {
-    Error findById(long id);
+public interface ErrorRepository extends Repository<ErrorEntity,Long>, PagingAndSortingRepository<ErrorEntity,Long> {
+    ErrorEntity findById(long id);
 
     @Override
-    Error save(Error error);
+    ErrorEntity save(ErrorEntity errorEntity);
 
 }

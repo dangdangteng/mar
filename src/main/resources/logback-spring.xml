@@ -32,9 +32,9 @@
             <onMatch>ACCEPT</onMatch>
             <onMismatch>DENY</onMismatch>
         </filter>
-        <file>${log.base}/${appName}-error.log</file>
+        <file>${log.base}/${appName}-errorEntity.log</file>
         <rollingPolicy class="ch.qos.logback.core.rolling.TimeBasedRollingPolicy">
-            <fileNamePattern>${log.base}/${appName}-error-%i.%d{yyyy-MM-dd}.log
+            <fileNamePattern>${log.base}/${appName}-errorEntity-%i.%d{yyyy-MM-dd}.log
             </fileNamePattern>
             <TimeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
                 <MaxFileSize>512MB</MaxFileSize>

@@ -1,7 +1,7 @@
 package com.dinglicom.mr.controller.view;
 
-import com.dinglicom.mr.entity.ReportKidJob;
-import com.dinglicom.mr.entity.page.PageRequest;
+import com.dinglicom.mr.entity.ReportKidJobEntity;
+import com.dinglicom.mr.entity.page.PageRequestEntity;
 import com.dinglicom.mr.repository.ReportKidJobRepository;
 import com.dinglicom.mr.response.MessageCode;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,9 +23,9 @@ public class ReportKidJobViewController {
         if (page == null || page < 0) {
             return new MessageCode(0, "分页信息不合法: page");
         }
-        PageRequest pageRequest = new PageRequest(page, size == null ? 100 : size, new Sort(Sort.Direction.ASC, "id"));
-        Page<ReportKidJob> all = reportKidJobRepository.findAll(pageRequest);
-        MessageCode<Page<ReportKidJob>> messageCode = new MessageCode<>();
+        PageRequestEntity pageRequestEntity = new PageRequestEntity(page, size == null ? 100 : size, new Sort(Sort.Direction.ASC, "id"));
+        Page<ReportKidJobEntity> all = reportKidJobRepository.findAll(pageRequestEntity);
+        MessageCode<Page<ReportKidJobEntity>> messageCode = new MessageCode<>();
         messageCode.setCode(1);
         messageCode.setMessage("获取数据成功!");
         messageCode.setData(all);
@@ -36,9 +36,9 @@ public class ReportKidJobViewController {
         if (page == null || page < 0) {
             return new MessageCode(0, "分页信息不合法: page");
         }
-        PageRequest pageRequest = new PageRequest(page, size == null ? 100 : size, new Sort(Sort.Direction.ASC, "id"));
-        Page<ReportKidJob> all = reportKidJobRepository.findAllByStateNot(4,pageRequest);
-        MessageCode<Page<ReportKidJob>> messageCode = new MessageCode<>();
+        PageRequestEntity pageRequestEntity = new PageRequestEntity(page, size == null ? 100 : size, new Sort(Sort.Direction.ASC, "id"));
+        Page<ReportKidJobEntity> all = reportKidJobRepository.findAllByStateNot(4, pageRequestEntity);
+        MessageCode<Page<ReportKidJobEntity>> messageCode = new MessageCode<>();
         messageCode.setCode(1);
         messageCode.setMessage("获取数据成功!");
         messageCode.setData(all);

@@ -1,6 +1,6 @@
 package com.dinglicom.mr.controller.job;
 
-import com.dinglicom.mr.entity.DecodeFile;
+import com.dinglicom.mr.entity.DecodeFileEntity;
 import com.dinglicom.mr.repository.DecodeFileKidJobRepository;
 import com.dinglicom.mr.repository.DecodeFileRepository;
 import com.dinglicom.mr.repository.SourceFileRepository;
@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.Optional;
 
 
 @RestController
@@ -33,7 +35,7 @@ public class JobSplitController {
     private SourceFileRepository sourceFileRepository;
 
     @RequestMapping(value = "/rcu",method = RequestMethod.POST)
-    public MessageCode rcuJobIntoMQ(@RequestParam(value = "id") int id,@RequestParam int port, @RequestParam String filePathName, @RequestParam Integer priority) throws Exception {
+    public MessageCode rcuJobIntoMQ(@RequestParam(value = "id") Long id,@RequestParam int port, @RequestParam String filePathName, @RequestParam Integer priority) throws Exception {
         if (priority>= 0 && priority <=100) {
             MessageCode rcu = rcuJobService.rcu(id, filePathName, port, priority);
             return rcu;
@@ -46,10 +48,10 @@ public class JobSplitController {
     }
 
     @RequestMapping(value = "/test", method = RequestMethod.POST)
-    public MessageCode test(@RequestParam int id) throws Exception {
-        DecodeFile byId = decodeFileRepository.findById(id);
-        if (byId.getId() == id){
-            MessageCode ddib = dDiBJobService.ddib(id, byId.getFileName(), byId.getPort(), 10);
+    public MessageCode test(@RequestParam Long id) throws Exception {
+        Optional<DecodeFileEntity> byId = decodeFileRepository.findById(id);
+        if (byId.get().getId() == id){
+            MessageCode ddib = dDiBJobService.ddib(id, byId.get().getFileName(), byId.get().getPort(), 10);
             return ddib;
         }
         return new MessageCode(0,"id : 输入有误");

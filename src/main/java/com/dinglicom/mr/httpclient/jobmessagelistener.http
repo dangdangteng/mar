@@ -1,0 +1,46 @@
+POST http://127.0.0.1:17651/job/write/dfkj/updateStateAndStartTimeById?key=0|ddib:1182265587720650752
+
+<> 2019-10-10T082012.500.json
+<> 2019-10-10T081820.400.json
+
+###
+
+POST http://127.0.0.1:17651/job/report/updateStateAndStartTimeByIdToReportKidJob?id=303|report3:1184361652880015360
+
+<> 2019-10-16T042139.200.json
+<> 2019-10-16T040047.500.json
+
+
+###
+
+POST http://127.0.0.1:17651/error/saveErrorMessage?errorMessage=fafdf
+
+<> 2019-10-30T051932.200.json
+<> 2019-10-30T051857.200.json
+<> 2019-10-30T051823.400.json
+
+###
+
+GET http://127.0.0.1:17651/test/save
+
+<> 2019-11-18T061320.404.json
+<> 2019-11-18T061200.404.json
+<> 2019-11-18T061047.404.json
+
+###
+
+POST http://127.0.0.1:17651/jobmessage/save
+Content-Type: application/json
+
+{
+   "jobMessage": "fadfafa",
+   "iworkIp": "test",
+   "iworkPort": 123,
+   "isDel" : 1,
+   "exception": "hahaha"
+}
+
+<> 2019-11-25T071501.400.json
+
+###
+

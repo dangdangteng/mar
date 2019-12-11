@@ -25,5 +25,11 @@ public class Constants {
     public final static String ddibConfigPath = "/home/fleet/fleetSwapDatas/config/import/";
     public final static String ddibTempPath = "/home/fleet/fleetSwapDatas/swapTemps/import/";
     public final static String ddibTempLatePath = "/home/fleet/fleetSwapDatas/template/import/";
-    public final static String ddibResultPath = "/home/fleet/fleetSwapDatas/import/";
+    public final static String ddibResultPath = "/home/fleet/fleetSwapDatas/swapTemps/import/";
+
+
+
+    public final static String Uk_Path_Name = "";
+
+    public final static String LibSiteSo = "/home/fleet/lib64/libSiteManager.so";
 }

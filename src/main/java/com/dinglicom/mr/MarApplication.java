@@ -10,7 +10,7 @@ import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 @EnableAsync
-@SpringBootApplication(scanBasePackages = {"com.dinglicom.mr.repository", "com.dinglicom.mr.controller.view","com.dinglicom.mr.handle", "com.dinglicom.mr.controller.job", "com.dinglicom.mr.producer", "com.dinglicom.mr.service", "com.dinglicom.mr.producer.confirm","com.dinglicom.mr.feign.fallback","com.dinglicom.mr.feign"})
+@SpringBootApplication(scanBasePackages = {"com.dinglicom.mr.repository", "com.dinglicom.mr.controller.view","com.dinglicom.mr.handle","com.dinglicom.mr.handle.service", "com.dinglicom.mr.controller.job", "com.dinglicom.mr.producer", "com.dinglicom.mr.service", "com.dinglicom.mr.producer.confirm","com.dinglicom.mr.feign.fallback","com.dinglicom.mr.feign","com.dinglicom.mr.config","com.dinglicom.mr.task"})
 @EnableJpaAuditing
 @EnableDiscoveryClient
 @EnableHystrix

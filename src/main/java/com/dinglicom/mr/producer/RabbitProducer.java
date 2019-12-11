@@ -102,20 +102,20 @@ public class RabbitProducer {
             channel = ChannelUtils.getChannel(rabbitTemplate);
             log.info("高级别报表任务 channel重新new------------- channel = " + channel);
         }
-//        lock.lock();
+        lock.lock();
         try {
             int messageCount;
             while (Constants.QUEUE_HIGH_PROPRITY_MAX == (messageCount = channel.queueDeclarePassive("dinglicom-queue").getMessageCount())) {
                 log.info("高级别报表任务 等待中------------- messageCount = " + messageCount);
-//                lock.wait();
+                lock.wait();
             }
             convertAndSend(indexId, listString, priority);
         } catch (Exception e) {
             log.info("高级别报表任务 +++++++++++++++lock error" + e.getMessage() + "+++++++++++++++++++++");
         }
-//        finally {
-//            lock.unlock();
-//        }
+        finally {
+            lock.unlock();
+        }
     }
 
     /**
@@ -127,8 +127,6 @@ public class RabbitProducer {
      * @throws Exception
      */
     public void send(AllObject indexId, String listString, int priority) throws Exception {
-//        Channel channel = ChannelUtils.getChannel(rabbitTemplate);
-//        int messageCount = channel.queueDeclarePassive("dinglicom-queue").getMessageCount();
         if (channel == null) {
             channel = ChannelUtils.getChannel(rabbitTemplate);
         }

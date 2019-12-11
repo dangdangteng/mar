@@ -17,7 +17,7 @@ import java.time.LocalDateTime;
 @ToString
 @Builder
 @Table(name = "source_file")
-public class SourceFile implements Serializable {
+public class SourceFileEntity implements Serializable {
 
     private static final long serialVersionUID = -6421339807294459819L;
     /**
@@ -25,7 +25,7 @@ public class SourceFile implements Serializable {
      */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private Long id;
 
     /**
      * 分组ID
@@ -242,7 +242,10 @@ public class SourceFile implements Serializable {
      */
     private String metroTimeTable;
 
-    public SourceFile(Integer id,String filePathName, Integer port) {
+    private String srcFilename;
+
+    public SourceFileEntity(Long id, String filePathName, Integer port) {
+        this.id = id;
         this.filePathName = filePathName;
         this.port = port;
     }

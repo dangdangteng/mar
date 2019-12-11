@@ -15,7 +15,7 @@ import java.io.Serializable;
 @NoArgsConstructor
 @Builder
 @Table(name = "error")
-public class Error implements Serializable {
+public class ErrorEntity implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

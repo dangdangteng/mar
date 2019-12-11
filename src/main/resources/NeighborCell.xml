@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Report Id="135424" Version="2.0.0.0">
+	<Scenes>
+		<Scene>
+			<DataSource>
+				<Data>
+				</Data>
+			</DataSource>
+		</Scene>
+	</Scenes>
+	<Filter/>
+	<Field Valid="true"/>
+	<StatisticConfig>
+		<ConfigItem Name="SortNASMsg" PropertyKey="1012" PropertyValue="0"/>
+		<ConfigItem Name="NeedAdjustNRThroughput" PropertyKey="1013" PropertyValue="0"/>
+		<ConfigItem Name="ConfigPropertyKey_Logic_StatisticMethod" PropertyKey="501" PropertyValue="0"/>
+		<ConfigItem Name="ConfigPropertyKey_Logic_ServiceProvider" PropertyKey="502" PropertyValue="3"/>
+		<ConfigItem Name="ConfigPropertyKey_Logic_MessageLostInterval" PropertyKey="503" PropertyValue="999999"/>
+		<ConfigItem Name="ConfigPropertyKey_Logic_FTPDropMode" PropertyKey="504" PropertyValue="1"/>
+		<ConfigItem Name="ConfigPropertyKey_Logic_UserStopMode" PropertyKey="505" PropertyValue="0"/>
+		<ConfigItem Name="ConfigPropertyKey_Logic_TimeOutMode" PropertyKey="506" PropertyValue="1"/>
+		<ConfigItem Name="ConfigPropertyKey_Logic_DeviceLostMode" PropertyKey="507" PropertyValue="0"/>
+		<ConfigItem Name="ConfigPropertyKey_Logic_PPPDropMode" PropertyKey="508" PropertyValue="0"/>
+		<ConfigItem Name="ConfigPropertyKey_Logic_VoiceIgnoreDevoceLost" PropertyKey="509" PropertyValue="1"/>
+		<ConfigItem Name="ConfigPropertyKey_Logic_AbandonNoVoiceDialMOSP" PropertyKey="510" PropertyValue="0"/>
+		<ConfigItem Name="ConfigPropertyKey_Logic_BlockCallTimeout" PropertyKey="511" PropertyValue="30"/>
+		<ConfigItem Name="ConfigPropertyKey_Logic_VoiceDropByExceptionCodeOfDownDisconnectMsg" PropertyKey="500" PropertyValue="0"/>
+		<ConfigItem Name="ConfigPropertyKey_Logic_NoRCUEventVoiceSPMode" PropertyKey="512" PropertyValue="0"/>
+		<ConfigItem Name="ConfigPropertyKey_Logic_AbandonHaveAlertBeforeBlockSP" PropertyKey="513" PropertyValue="0"/>
+		<ConfigItem Name="ConfigPropertyKey_Logic_AbandonSpecialReasonExceptVoiceSP" PropertyKey="514" PropertyValue="1"/>
+		<ConfigItem Name="ConfigPropertyKey_Logic_Email70543DropMode" PropertyKey="515" PropertyValue="1"/>
+		<ConfigItem Name="ConfigPropertyKey_Logic_LastCallNotInclude" PropertyKey="520" PropertyValue="0"/>
+		<ConfigItem Name="ConfigPropertyKey_Logic_InviteBidVersion" PropertyKey="105" PropertyValue="0"/>
+		<ConfigItem Name="ConfigPropertyKey_Logic_DNSFailureOption" PropertyKey="516" PropertyValue="0"/>
+		<ConfigItem Name="ConfigPropertyKey_Logic_VoLTENoByeRequestOption" PropertyKey="525" PropertyValue="0"/>
+		<ConfigItem Name="ConfigPropertyKey_Decode_IsComprehensiveTestInstrument" PropertyKey="1008" PropertyValue="0"/>
+		<ConfigItem Name="ConfigPropertyKey_ContinueDecompressWhileCRCError" PropertyKey="10004" PropertyValue="0"/>
+		<ConfigItem Name="ConfigPropertyKey_Logic_Scanner_LTEPollingValueType" PropertyKey="526" PropertyValue="2"/>
+		<ConfigItem Name="ConfigPropertyKey_Logic_Scanner_NBIoTPollingValueType" PropertyKey="527" PropertyValue="2"/>
+		<ConfigItem Name="ConfigPropertyKey_Logic_VoLTECallDropWhenNoEndMessage" PropertyKey="517" PropertyValue="1"/>
+		<ConfigItem Name="ConfigPropertyKey_Logic_VoLTECallEndCheckByeOKDirection" PropertyKey="519" PropertyValue="0"/>
+		<ConfigItem Name="ConfigPropertyKey_Logic_VoiceCDMAAttemptNeedOption" PropertyKey="518" PropertyValue="0"/>
+		<ConfigItem Name="ConfigPropertyKey_Logic_VoiceDropByOnlyUplinkRTPDuration" PropertyKey="521" PropertyValue="20000"/>
+		<ConfigItem Name="ConfigPropertyKey_Logic_VoiceConnectedByAlerting" PropertyKey="522" PropertyValue="0"/>
+		<ConfigItem Name="ConfigPropertyKey_Logic_VoLTEaThirdPartyCall" PropertyKey="523" PropertyValue="1"/>
+		<ConfigItem Name="ConfigPropertyKey_Decode_NRDLThroughputOutputType" PropertyKey="1010" PropertyValue="3"/>
+		<ConfigItem Name="ConfigPropertyKey_Decode_NRULThroughputOutputType" PropertyKey="1011" PropertyValue="3"/>
+		<ConfigItem Name="ConfigPropertyKey_IsCheckGPSPointWithKMLLineDistance" PropertyKey="201" PropertyValue="0"/>
+		<ConfigItem Name="ConfigPropertyKey_SevenFourDataCode" PropertyKey="74" PropertyValue="1"/>
+		<ConfigItem Name="ConfigPropertyKey_SevenOneDataCode" PropertyKey="71" PropertyValue="983808"/>
+	</StatisticConfig>
+	<Bins>
+		<Bin Mode="Grid" Value="500000" Name="NeighborCellSet" Merge="true" ValueType="Average" ID="-9999"/>
+	</Bins>
+	<Sites>
+		<Site FileName="afafa" Network="NR">
+			<Field Name="SiteId" Alias="Site ID"/>
+			<Field Name="SectorId" Alias="Sector ID"/>
+			<Field Name="CellId" Alias="CELL ID"/>
+			<Field Name="SiteName" Alias="SITE NAME"/>
+			<Field Name="CellName" Alias="CELL NAME"/>
+			<Field Name="Frequency" Alias="SSB ARFCN;Center ARFCN"/>
+		</Site>
+	</Sites>
+	<Groups/>
+	<ReportElement>
+		<Analysises>
+			<NeighborCells>
+				<NeighborCell Bin="NeighborCellSet" NetType="NSA" ConditionId="1" Scene="" SumMode="Detail" StatMode="CellInfo" CoverageDistance="10000">
+					<Conditions>
+						<SetCellParam CellParam="RxPower" Expression="&gt;=-141"/>
+						<SetCellParam CellParam="Quality" Expression="&gt;=-40"/>
+						<SetCellParam CellParam="Strength" Expression="&gt;=-125"/>
+					</Conditions>
+					<Algorithm DataType="UE"/>
+				</NeighborCell>
+			</NeighborCells>
+			<KPIs>
+				<KPI StatMode="Detail" Name="Condition_1" ConditionId="2" SumMode="Summary" OutputDir="D:R">
+					<DetailOutput>
+						<SQL>select * from neighborcelltotal</SQL>
+					</DetailOutput>
+				</KPI>
+			</KPIs>
+		</Analysises>
+	</ReportElement>
+</Report>

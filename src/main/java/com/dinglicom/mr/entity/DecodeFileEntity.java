@@ -6,10 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.context.ApplicationContext;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
@@ -21,7 +18,8 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class DecodeFile implements Serializable {
+@Table(name = "decode_file")
+public class DecodeFileEntity implements Serializable {
 
 
     private static final long serialVersionUID = 4511671010896401436L;
@@ -31,7 +29,7 @@ public class DecodeFile implements Serializable {
      */
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private Long id;
 
     /**
      * 分组ID
@@ -41,7 +39,7 @@ public class DecodeFile implements Serializable {
     /**
      * 源文件ID
      */
-    private Integer sourceFileId;
+    private Long sourceFileId;
 
     /**
      * 设备模型
@@ -272,7 +270,7 @@ public class DecodeFile implements Serializable {
 
     private Integer priority;
 
-    public DecodeFile(Integer id, Integer port, String filename) {
+    public DecodeFileEntity(Long id, Integer port, String filename) {
         this.id = id;
         this.port = port;
         this.fileName = filename;

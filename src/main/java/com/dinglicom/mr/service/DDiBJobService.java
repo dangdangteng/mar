@@ -4,9 +4,9 @@ import com.dingli.ImportDbConfig;
 import com.dingli.cloudunify.core.response.Response;
 import com.dingli.damain.TaskRequest;
 import com.dinglicom.mr.Enum.StatusEnum;
-import com.dinglicom.mr.entity.DecodeFile;
-import com.dinglicom.mr.entity.DecodeFileKidJob;
-import com.dinglicom.mr.entity.TaskConfig;
+import com.dinglicom.mr.entity.DecodeFileEntity;
+import com.dinglicom.mr.entity.DecodeFileKidJobEntity;
+import com.dinglicom.mr.entity.TaskConfigEntity;
 import com.dinglicom.mr.entity.correlationdata.AllObject;
 import com.dinglicom.mr.feign.CloudUnifyRedisFeign;
 import com.dinglicom.mr.producer.RabbitProducer;
@@ -24,6 +24,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
 import java.util.ArrayList;
 import java.util.Optional;
 
@@ -60,11 +63,11 @@ public class DDiBJobService {
     @Value("${import.clientFlag}")
     private String clientFlag;
 
-    public MessageCode ddib(Integer id, String decodeFilePathName, int port, Integer priority) throws Exception {
-        Optional<TaskConfig> byId = taskConfigRepository.findById(2);
-        DecodeFile decodeFile = new DecodeFile(id, port, decodeFilePathName);
-        log.info("DecodeFile :" + decodeFile.getId() + "_" + decodeFile.getFileName() + "_" + decodeFile.getFilePathName()+"_" + decodeFile.getPort());
-        TaskRequest taskRequest = TaskUtil.decodeFileToTaskRequest(decodeFile, byId.get());
+    public MessageCode ddib(Long id, String decodeFilePathName, int port, Integer priority) throws Exception {
+        Optional<TaskConfigEntity> byId = taskConfigRepository.findById(2);
+        DecodeFileEntity decodeFileEntity = new DecodeFileEntity().setId(id).setFileName(decodeFilePathName).setPort(port).setStartDt(LocalDateTime.now());
+        log.info("DecodeFileEntity :" + decodeFileEntity.getId() + "_" + decodeFileEntity.getFileName() + "_" + decodeFileEntity.getFilePathName()+"_" + decodeFileEntity.getPort());
+        TaskRequest taskRequest = TaskUtil.decodeFileToTaskRequest(decodeFileEntity, byId.get());
         log.info("taskRequest :" + taskRequest.toString());
         if (taskRequest == null) {
             return new MessageCode(0, "taskconfig : 配置错误!");
@@ -72,32 +75,30 @@ public class DDiBJobService {
         ArrayList arrayList = new ArrayList();
         ImportDbConfig importDbConfig = new ImportDbConfig();
         importDbConfig.setConfig(byId.get().getConfigPath(), byId.get().getTemplatePath(), byId.get().getConfigPath());
-        //TODO: 配置一定要我们传过去吗???
         importDbConfig.setDBConnectionConfig(url, datasource, user, password, myport, String.valueOf(clientFlag));
-
         log.info("success ----------------"+importDbConfig.toString());
         boolean b = importDbConfig.getImportRequestFile(taskRequest, arrayList);
         log.info("-----------------" + b);
         if (b) {
             arrayList.parallelStream().forEach(o -> {
                 try {
-                    DecodeFileKidJob decodeFileKidJob = new DecodeFileKidJob();
+                    DecodeFileKidJobEntity decodeFileKidJobEntity = new DecodeFileKidJobEntity();
                     log.info("拆任务并发入库开始...");
-                    decodeFileKidJob.setTaskId(id);
-                    decodeFileKidJob.setLevel(1);
-                    decodeFileKidJob.setRetryCount(0);
-                    decodeFileKidJob.setState(1);
-                    decodeFileKidJob.setStartTime(System.currentTimeMillis());
-                    decodeFileKidJob.setEndTime(null);
-                    decodeFileKidJob.setException(StatusEnum.getMessage(1));
-                    decodeFileKidJob.setReturnValue(o + "");
+                    decodeFileKidJobEntity.setTaskId(id);
+                    decodeFileKidJobEntity.setLevel(1);
+                    decodeFileKidJobEntity.setRetryCount(0);
+                    decodeFileKidJobEntity.setState(1);
+                    decodeFileKidJobEntity.setStartTime(System.currentTimeMillis());
+                    decodeFileKidJobEntity.setEndTime(null);
+                    decodeFileKidJobEntity.setException(StatusEnum.getMessage(1));
+                    decodeFileKidJobEntity.setReturnValue(o + "");
                     ObjectMapper objectMapper = new ObjectMapper();
-                    String s = objectMapper.writeValueAsString(decodeFileKidJob);
-//                    DecodeFileKidJob save = decodeFileKidJobRepository.save(decodeFileKidJob);
+                    String s = objectMapper.writeValueAsString(decodeFileKidJobEntity);
+//                    DecodeFileKidJobEntity save = decodeFileKidJobRepository.save(decodeFileKidJobEntity);
                     Response response = cloudUnifyRedisFeign.addString(s, id + "|ddib");
                     log.info("DDIB入库完毕..." + response.toString());
                     AllObject allObject = new AllObject();
-                    allObject.setId("DDIB:" + decodeFileKidJob.getId());
+                    allObject.setId("DDIB:" + decodeFileKidJobEntity.getId());
                     allObject.setPort(port);
                     allObject.setFilePathName(decodeFilePathName);
                     allObject.setObj(o + ":" + "DDIB|" + response.getData());
@@ -107,7 +108,6 @@ public class DDiBJobService {
                 } catch (Exception e) {
                     log.info(e.getMessage());
                 }
-
             });
             return new MessageCode(1, "入库成功! 数据已经压入队列...");
         }
@@ -121,6 +121,12 @@ public class DDiBJobService {
         allObject.setNum(1);
         rabbitProducer.send(allObject, allObject.getObj(), 20);
     }
+
+  public static void main(String[] args) {
+    //
+    System.out.println();
+    System.out.println(LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+  }
 }
 
 

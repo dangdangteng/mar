@@ -3,6 +3,7 @@ package com.dinglicom.mr.util;
 import org.joda.time.DateTime;
 import org.joda.time.LocalDateTime;
 
+import javax.xml.crypto.Data;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -20,6 +21,11 @@ public class DateUtils {
         DateTime dateTime = new DateTime(longTime);
         return dateTime.toString("yyyy-MM-dd HH:mm:ss");
     }
+
+    public static String longTimeToDateTimeByJodaString(){
+        DateTime dateTime = new DateTime();
+        return dateTime.toString("yyyyMMdd");
+    }
     //long 转 localdatatime 安全并发下无阻塞
     public static LocalDateTime longTimeToLocalDateTime(long longTime) {
         DateTime dateTime = new DateTime(longTime);
@@ -27,9 +33,9 @@ public class DateUtils {
         return localDateTime;
     }
 
+
     public static void main(String[] args) {
-        long l = System.currentTimeMillis();
-        LocalDateTime localDateTime = longTimeToLocalDateTime(l);
-        System.out.println(localDateTime);
+        LocalDateTime localDateTime = longTimeToLocalDateTime(System.currentTimeMillis());
+        System.out.println(localDateTime.toString());
     }
 }

@@ -11,7 +11,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 @Log
 @Component
-@RequestMapping
 public class AdminFeignFallBack implements FallbackFactory<CloudunifyAdminFeign> {
     @Override
     public CloudunifyAdminFeign create(Throwable throwable) {

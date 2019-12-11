@@ -1,7 +1,7 @@
 package com.dinglicom.mr.controller.job;
 
-import com.dinglicom.mr.entity.DecodeFile;
-import com.dinglicom.mr.entity.SourceFile;
+import com.dinglicom.mr.entity.DecodeFileEntity;
+import com.dinglicom.mr.entity.SourceFileEntity;
 import com.dinglicom.mr.response.MessageCode;
 import com.dinglicom.mr.service.DDiBJobService;
 import com.dinglicom.mr.service.DecodeJobService;
@@ -28,29 +28,29 @@ public class JobStatusWriteSourceFileTableController {
     private DDiBJobService dDiBJobService;
 
     @RequestMapping(value = "/callBack",method = RequestMethod.POST)
-    public MessageCode workCallBackMessage(@RequestParam int id, @RequestParam int statusCode, @RequestParam String ddibFileName) throws Exception {
+    public MessageCode workCallBackMessage(@RequestParam Long id, @RequestParam int statusCode, @RequestParam String ddibFileName) throws Exception {
         sourceJobService.updateStatusAndEndTime(id, statusCode);
         log.info(id+"----"+statusCode+"------"+ddibFileName);
-        SourceFile byId = sourceJobService.findById(id);
-        DecodeFile decodeFile = new DecodeFile();
-        decodeFile.setSourceFileId(id);
-        decodeFile.setGroupId(byId.getGroupId());
-        decodeFile.setFileName(ddibFileName);
-        decodeFile.setPort(byId.getPort());
-        decodeFile.setDataType(byId.getDataType());
-        decodeFile.setDeviceModel("");
-        decodeFile.setFilePathName(byId.getFilePathName());
-        decodeFile.setSystemServiceId(1);
-        decodeFile.setTotalPointCount(0);
-        decodeFile.setTotalGpsPointCount(0);
-        decodeFile.setIsDelete(0);
-        decodeFile.setCreateDt(LocalDateTime.now());
-        decodeFile.setStartDt(LocalDateTime.now());
-        MessageCode<DecodeFile> messageCode1 = decodeJobService.saveDecodeFile(decodeFile);
+        SourceFileEntity byId = sourceJobService.findById(id);
+        DecodeFileEntity decodeFileEntity = new DecodeFileEntity();
+        decodeFileEntity.setSourceFileId(id);
+        decodeFileEntity.setGroupId(byId.getGroupId());
+        decodeFileEntity.setFileName(ddibFileName);
+        decodeFileEntity.setPort(byId.getPort());
+        decodeFileEntity.setDataType(byId.getDataType());
+        decodeFileEntity.setDeviceModel("");
+        decodeFileEntity.setFilePathName(byId.getFilePathName());
+        decodeFileEntity.setSystemServiceId(1);
+        decodeFileEntity.setTotalPointCount(0);
+        decodeFileEntity.setTotalGpsPointCount(0);
+        decodeFileEntity.setIsDelete(0);
+        decodeFileEntity.setCreateDt(LocalDateTime.now());
+        decodeFileEntity.setStartDt(LocalDateTime.now());
+        MessageCode<DecodeFileEntity> messageCode1 = decodeJobService.saveDecodeFile(decodeFileEntity);
         if (messageCode1.getCode() != 1 || messageCode1.getData() == null) {
             return messageCode1;
         }
-        MessageCode ddib = dDiBJobService.ddib(messageCode1.getData().getId(), decodeFile.getFileName(), decodeFile.getPort(), 10);
+        MessageCode ddib = dDiBJobService.ddib(messageCode1.getData().getId(), decodeFileEntity.getFileName(), decodeFileEntity.getPort(), 10);
         return ddib;
     }
 }

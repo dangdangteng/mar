@@ -19,6 +19,7 @@ public class ChannelUtils {
      * @return
      * @throws IOException
      */
+
     public static Channel getChannel(RabbitTemplate rabbitTemplate) throws IOException {
         ConnectionFactory connectionFactory = rabbitTemplate.getConnectionFactory();
         Connection connection = connectionFactory.createConnection();

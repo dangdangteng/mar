@@ -2,7 +2,7 @@ package com.dinglicom.mr.controller.job;
 
 import com.dingli.cloudunify.core.response.Response;
 import com.dinglicom.mr.Enum.StatusEnum;
-import com.dinglicom.mr.entity.DecodeFileKidJob;
+import com.dinglicom.mr.entity.DecodeFileKidJobEntity;
 import com.dinglicom.mr.feign.CloudUnifyRedisFeign;
 import com.dinglicom.mr.repository.DecodeFileKidJobRepository;
 import com.dinglicom.mr.repository.DecodeFileRepository;
@@ -32,10 +32,10 @@ public class JobStatusWriteDecodeFileKidJobTableController {
         log.info("key is :" + key);
         Response stringByKey = cloudUnifyRedisFeign.getStringByKey(key);
         ObjectMapper objectMapper = new ObjectMapper();
-        DecodeFileKidJob decodeFileKidJob1 = objectMapper.readValue(stringByKey.getData().toString(), DecodeFileKidJob.class);
+        DecodeFileKidJobEntity decodeFileKidJobEntity1 = objectMapper.readValue(stringByKey.getData().toString(), DecodeFileKidJobEntity.class);
         log.info("**value =" + stringByKey.toString());
-        decodeFileKidJob1.setState(3);
-        Response response = cloudUnifyRedisFeign.updateDate(key, objectMapper.writeValueAsString(decodeFileKidJob1));
+        decodeFileKidJobEntity1.setState(3);
+        Response response = cloudUnifyRedisFeign.updateDate(key, objectMapper.writeValueAsString(decodeFileKidJobEntity1));
         if (response.getData() == "0"){
             return new MessageCode(0,"更新失败！");
         }
@@ -47,11 +47,11 @@ public class JobStatusWriteDecodeFileKidJobTableController {
         log.info("JobStatusWriteDecodeFileKidJobTableController.updateEndTimeById() :" + id + ":" + stateCode);
         Response stringByKey = cloudUnifyRedisFeign.getStringByKey(id);
         ObjectMapper objectMapper = new ObjectMapper();
-        DecodeFileKidJob decodeFileKidJob1 = objectMapper.readValue(stringByKey.getData().toString(), DecodeFileKidJob.class);
+        DecodeFileKidJobEntity decodeFileKidJobEntity1 = objectMapper.readValue(stringByKey.getData().toString(), DecodeFileKidJobEntity.class);
         if (stateCode != 2) {
-            decodeFileKidJob1.setState(stateCode);
-            decodeFileKidJob1.setEndTime(System.currentTimeMillis());
-            DecodeFileKidJob save = decodeFileKidJobRepository.save(decodeFileKidJob1);
+            decodeFileKidJobEntity1.setState(stateCode);
+            decodeFileKidJobEntity1.setEndTime(System.currentTimeMillis());
+            DecodeFileKidJobEntity save = decodeFileKidJobRepository.save(decodeFileKidJobEntity1);
             return new MessageCode(0, StatusEnum.getMessage(stateCode));
         }
         Response remove = cloudUnifyRedisFeign.remove(id);

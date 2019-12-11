@@ -12,7 +12,6 @@ import java.util.Set;
 
 @Log
 @Component
-@RequestMapping("/fallback/redis/cache")
 public class RedisFeignFallBack implements FallbackFactory<CloudUnifyRedisFeign> {
 
     @Override
@@ -21,7 +20,8 @@ public class RedisFeignFallBack implements FallbackFactory<CloudUnifyRedisFeign>
             @Override
             public Response<Set<String>> searchKey(String keyPatten) throws Exception {
                 Thread.sleep(5000);
-                log.info("retry ----");
+                log.info("retry ---- searchKey");
+                log.info("异常信息:" + throwable.toString());
                 return ResponseGenerator.genFailResult("服务器异常");
             }
 
@@ -29,8 +29,10 @@ public class RedisFeignFallBack implements FallbackFactory<CloudUnifyRedisFeign>
             public Response addString(String objs, String id) {
                 try {
                     Thread.sleep(5000);
-                    log.info("retry ----");
+                    log.info("retry ---- addString");
+                    log.info("异常信息:" + throwable.toString());
                 } catch (Exception e) {
+                    log.info("异常信息:" + throwable.toString());
                     log.info(e.toString());
                 }
                 return ResponseGenerator.genFailResult("服务器异常");
@@ -40,7 +42,8 @@ public class RedisFeignFallBack implements FallbackFactory<CloudUnifyRedisFeign>
             public Response getStringByKey(String key) {
                 try {
                     Thread.sleep(5000);
-                    log.info("retry ----");
+                    log.info("retry ---- getStringByKey");
+                    log.info("异常信息:" + throwable.toString());
                 } catch (Exception e) {
                     log.info(e.toString());
                 }
@@ -51,8 +54,10 @@ public class RedisFeignFallBack implements FallbackFactory<CloudUnifyRedisFeign>
             public Response<Boolean> remove(String key) {
                 try {
                     Thread.sleep(5000);
-                    log.info("retry ----");
+                    log.info("retry ---- remove");
+                    log.info("异常信息:" + throwable.toString());
                 } catch (Exception e) {
+                    log.info("异常信息:" + throwable.toString());
                     log.info(e.toString());
                 }
                 return ResponseGenerator.genFailResult("服务器异常");
@@ -62,7 +67,8 @@ public class RedisFeignFallBack implements FallbackFactory<CloudUnifyRedisFeign>
             public Response addNum(String objs, String id) {
                 try {
                     Thread.sleep(5000);
-                    log.info("retry ----");
+                    log.info("retry ---- addNum");
+                    log.info("异常信息:" + throwable.toString());
                 } catch (Exception e) {
                     log.info(e.toString());
                 }
@@ -73,9 +79,11 @@ public class RedisFeignFallBack implements FallbackFactory<CloudUnifyRedisFeign>
             public Response updateDate(String key, String value) {
                 try {
                     Thread.sleep(5000);
-                    log.info("retry ----");
+                    log.info("retry ---- updateDate");
+                    log.info("异常信息:" + throwable.toString());
                 } catch (Exception e) {
                     log.info(e.toString());
+                    log.info("异常信息:" + throwable.toString());
                 }
                 return ResponseGenerator.genFailResult("服务器异常");
             }
@@ -84,8 +92,10 @@ public class RedisFeignFallBack implements FallbackFactory<CloudUnifyRedisFeign>
             public Response getNum(String key) {
                 try {
                     Thread.sleep(5000);
-                    log.info("retry ----");
+                    log.info("retry ---- genNum");
+                    log.info("异常信息:" + throwable.toString());
                 } catch (Exception e) {
+                    log.info("异常信息:" + throwable.toString());
                     log.info(e.toString());
                 }
                 return ResponseGenerator.genFailResult("服务器异常");

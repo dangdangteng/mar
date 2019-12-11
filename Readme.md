@@ -4,6 +4,8 @@
         src.main
             -java
                 -com.dinglicom.mr
+                    -cc
+                        调用c
                     -config
                         配置类.class
                     -constants
@@ -23,6 +25,10 @@
                         枚举类.class
                     -exception
                         异常处理类.class
+                    -feign
+                        远程调用类.class
+                    -handler
+                        分流器控制类.class
                     -producer
                         -confirm
                             队列回调类.class
@@ -47,7 +53,7 @@
 
 > ddib : 10
 
-> report: IA 50 IB 50 IC 50
+> report: IA 50 IB 60 IC 70
 
 ## 项目技术要点
 > springboot + springcloud + 配合eureka 实现远程服务调用，传输数据压缩，响应时间配置

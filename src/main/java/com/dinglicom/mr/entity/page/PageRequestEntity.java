@@ -13,8 +13,8 @@ import java.io.Serializable;
 @NoArgsConstructor
 @Data
 @ToString
-public class PageRequest implements Serializable, Pageable {
-//    PageRequest pageRequest = new PageRequest(p,size, new Sort(Sort.Direction.ASC,"id"));
+public class PageRequestEntity implements Serializable, Pageable {
+//    PageRequestEntity pageRequest = new PageRequestEntity(p,size, new Sort(Sort.Direction.ASC,"id"));
     private Integer page;
     private Integer size;
     private Sort sort;

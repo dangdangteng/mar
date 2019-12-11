@@ -14,6 +14,8 @@ server:
     # 是否分配的直接内存
     direct-buffers: true
 spring:
+  jpa:
+    open-in-view: false
   aop:
     proxy-target-class: true
   application:
@@ -32,13 +34,14 @@ spring:
       max-request-size: 10MB
   jackson:
     default-property-inclusion: non_null
-
-
+  cloud:
+    loadbalancer:
+      retry:
+        enabled: true
 logging:
   path: logs
   level:
     org.springframework: info
-
 # 描述信息
 info:
   app:
@@ -49,7 +52,6 @@ info:
 
   # 加载所有的端点/默认只加载了 info / health
   # 可以关闭制定的端点
-
 management:
   server:
     port: 17651
@@ -67,17 +69,10 @@ management:
       enabled: false
     info:
       enabled: true
-    #    beans:
-    #      enabled: true
-    #    caches:
-    #      enabled: true
     mappings:
       enabled: true
     metrics:
       enabled: true
-    #    service-registry:
-    #      enabled: true
-    # management.endpoints.web.path-mapping.health=rest_health
     loggers:
       enabled: true
 
@@ -94,13 +89,13 @@ feign:
       enabled: true
     response:
       enabled: true
-  client:
-    config:
-      default:  # 服务名，default表示所有服务
-        connectTimeout: 10000
-        readTimeout: 600000
-        loggerLevel: full
   okhttp:
     enabled: false
   hystrix:
+    enabled: true
+ribbon:
+  eureka:
+    enabled: true
+  eager-load:
+    clients: cloudunify-admin, cloudunify-redis-service, SERVICE-MONITOR
     enabled: true

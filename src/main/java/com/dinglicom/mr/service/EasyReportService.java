@@ -8,8 +8,8 @@
 //import com.dingli.merger.Merger;
 //import com.dingli.simplifyStatistics.SimplifyStatistics;
 //import com.dinglicom.mr.Enum.StatusEnum;
-//import com.dinglicom.mr.entity.ReportKidJob;
-//import com.dinglicom.mr.entity.TaskConfig;
+//import com.dinglicom.mr.entity.ReportKidJobEntity;
+//import com.dinglicom.mr.entity.TaskConfigEntity;
 //import com.dinglicom.mr.entity.correlationdata.AllObject;
 //import com.dinglicom.mr.handle.HandleIndexOf;
 //import com.dinglicom.mr.repository.TaskConfigRepository;
@@ -36,7 +36,7 @@
 //    @Override
 //    @Async
 //    public Response jobDoing(String jsonObj) throws Exception {
-//        Optional<TaskConfig> byId = taskConfigRepository.findById(300);
+//        Optional<TaskConfigEntity> byId = taskConfigRepository.findById(300);
 //        log.info("=============" + id);
 //        /**
 //         * 一级任务
@@ -69,7 +69,7 @@
 //            if (simplifyStatisticRequestFile) {
 //                simplifyList.parallelStream().forEach(o -> {
 //                    try {
-//                        ReportKidJob reportKidJob = new ReportKidJob();
+//                        ReportKidJobEntity reportKidJob = new ReportKidJobEntity();
 //                        reportKidJob.setLevel(1);
 //                        reportKidJob.setState(1);
 //                        reportKidJob.setException(StatusEnum.getMessage(1));
@@ -100,7 +100,7 @@
 //         * 校验1级任务的合法性
 //         */
 //        if (elementAttribute.size() == errorList.size()) {
-//            ReportKidJob reportKidJob = new ReportKidJob();
+//            ReportKidJobEntity reportKidJob = new ReportKidJobEntity();
 //            reportKidJob.setException("没有读取到文件名称");
 //            reportKidJob.setStartTime(System.currentTimeMillis());
 //            reportKidJobRepository.save(reportKidJob);
@@ -118,7 +118,7 @@
 //        Merger merger = new Merger();
 //        ArrayList mergerList = new ArrayList();
 //        boolean mergerRequestFile = merger.getMergerRequestFile(elementAttributeForII, mergerList);
-//        ReportKidJob reportKidJob = new ReportKidJob();
+//        ReportKidJobEntity reportKidJob = new ReportKidJobEntity();
 //        List jobList = new ArrayList();
 //        if (mergerRequestFile) {
 //            mergerList.stream().forEach(o -> {
@@ -131,7 +131,7 @@
 //                reportKidJob.setEndTime(null);
 //                reportKidJob.setResponse(elementAttributeForII.getCommonAttributeVal().getResultFile());
 //                reportKidJob.setTaskId(id);
-////                ReportKidJob save = reportKidJobRepository.save(reportKidJob);
+////                ReportKidJobEntity save = reportKidJobRepository.save(reportKidJob);
 //                try {
 //                    String s = mapper.writeValueAsString(reportKidJob);
 //                    Response<String> response = cloudUnifyRedisFeign.addString(s, id + "|report2");
@@ -150,7 +150,7 @@
 //        boolean fillRequestFile = report.getFillRequestFile(elementAttributeForIII, reportList);
 //        if (fillRequestFile) {
 //            reportList.parallelStream().forEach(o -> {
-//                ReportKidJob reportKidJob1 = new ReportKidJob();
+//                ReportKidJobEntity reportKidJob1 = new ReportKidJobEntity();
 //                reportKidJob1.setLevel(3);
 //                reportKidJob1.setState(1);
 //                reportKidJob1.setException(StatusEnum.getMessage(1));

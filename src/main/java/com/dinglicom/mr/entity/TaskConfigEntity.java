@@ -12,7 +12,7 @@ import java.io.Serializable;
 @Data
 @EqualsAndHashCode
 @Table(name = "task_config")
-public class TaskConfig implements Serializable {
+public class TaskConfigEntity implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

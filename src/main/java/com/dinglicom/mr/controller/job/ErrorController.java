@@ -1,6 +1,6 @@
 package com.dinglicom.mr.controller.job;
 
-import com.dinglicom.mr.entity.Error;
+import com.dinglicom.mr.entity.ErrorEntity;
 import com.dinglicom.mr.repository.ErrorRepository;
 import com.dinglicom.mr.response.MessageCode;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,9 +17,9 @@ public class ErrorController {
 
     @RequestMapping(value = "/saveErrorMessage",method = RequestMethod.POST)
     public MessageCode saveErrorMessage(@RequestParam String errorMessage) throws Exception{
-        Error e = new Error();
+        ErrorEntity e = new ErrorEntity();
         e.setError(errorMessage);
-        Error save = errorRepository.save(e);
+        ErrorEntity save = errorRepository.save(e);
         return new MessageCode(1,e.getError());
     }
 }

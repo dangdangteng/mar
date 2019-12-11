@@ -6,9 +6,10 @@ spring:
   datasource:
     type: com.zaxxer.hikari.HikariDataSource
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://172.16.23.152:3306/db_1?useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC
+    #url: jdbc:mysql:///172.16.23.151:8066/fleet_test?useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC
+    url: jdbc:mysql://172.16.23.151:8066/fleet_test?serverTimezone=UTC&characterEncoding=UTF-8
     username: root
-    password: Fleet2011@DB.
+    password: 123456
     hikari:
       minimum-idle: 10
       idle-timeout: 180000
@@ -45,6 +46,7 @@ eureka:
       defaultZone: http://${spring.security.user.name}:${spring.security.user.password}@172.16.23.151:8762/eureka/, http://${spring.security.user.name}:${spring.security.user.password}@172.16.23.151:8761/eureka/
     healthcheck:
       enabled: true
+    fetch-registry: true
   instance:
     prefer-ip-address: true
 #支持配置
