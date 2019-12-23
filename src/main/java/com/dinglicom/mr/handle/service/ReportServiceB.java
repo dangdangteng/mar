@@ -19,12 +19,14 @@ public class ReportServiceB implements HandleIndexOf {
 
     @Override
     public Response jobDoing(String jsonObj) throws Exception {
+        String id = jsonObj.substring(0, jsonObj.indexOf("|"));
         Response stringByKey = cloudUnifyRedisFeign.getStringByKey(jsonObj);
         String redisString = stringByKey.getData().toString();
         ObjectMapper objectMapper = new ObjectMapper();
         ReportKidJobEntity reportKidJobEntity = objectMapper.readValue(redisString, ReportKidJobEntity.class);
         ReportKidJobEntity save = reportKidJobRepository.save(reportKidJobEntity);
-        cloudUnifyRedisFeign.remove(jsonObj);
+        Response<Boolean> remove = cloudUnifyRedisFeign.remove(jsonObj);
+        Response<Long> longResponse = cloudUnifyRedisFeign.incrRanNum(id + "IB", 200);
         return ResponseGenerator.genSuccessResult();
     }
 }

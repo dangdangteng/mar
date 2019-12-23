@@ -79,10 +79,11 @@ management:
 feign:
   httpclient:
     connection-timeout: 300000
-    max-connections: 1000
+    max-connections: 10000
     time-to-live: 60000
     enabled: true
-    max-connections-per-route: 200
+    max-connections-per-route: 2000
+    connection-timer-repeat: 10000
   compression:
     request:
       mime-types: text/xml,application/xml,application/json
@@ -93,9 +94,15 @@ feign:
     enabled: false
   hystrix:
     enabled: true
+  client:
+    config:
+      default:
+        connectTimeout: 10000
+        readTimeout: 12000
 ribbon:
   eureka:
     enabled: true
   eager-load:
     clients: cloudunify-admin, cloudunify-redis-service, SERVICE-MONITOR
     enabled: true
+

@@ -12,11 +12,11 @@ public class NumCompare {
      * @param c 比较参数double
      * @return
      */
-    public static Boolean doubleCompare(int a, int b, double c) {
+    public static Boolean doubleCompare(long a, long b, double c) {
         BigDecimal aDecimal = new BigDecimal(a);
         BigDecimal bDecimal = new BigDecimal(b);
         BigDecimal compare = new BigDecimal(c);
-        BigDecimal divide = aDecimal.divide(bDecimal);
+        BigDecimal divide = aDecimal.divide(bDecimal,2,BigDecimal.ROUND_HALF_UP);
         if (divide.compareTo(compare)>0){
             return true;
         }

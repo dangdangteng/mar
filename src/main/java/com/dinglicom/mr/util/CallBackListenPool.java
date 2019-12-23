@@ -1,18 +1,16 @@
 package com.dinglicom.mr.util;
 
 
-import com.dingli.cloudunify.core.response.Response;
 import com.google.common.util.concurrent.FutureCallback;
 import lombok.extern.java.Log;
 import org.checkerframework.checker.nullness.qual.Nullable;
 
 @Log
-public class CallBackListenPool implements FutureCallback<Response> {
+public class CallBackListenPool<T> implements FutureCallback<T> {
 
     @Override
-    public void onSuccess(@Nullable Response response) {
-
-        log.info("回调成功!" + response);
+    public void onSuccess(@Nullable T t) {
+        log.info("回调成功!" + t);
     }
 
     @Override

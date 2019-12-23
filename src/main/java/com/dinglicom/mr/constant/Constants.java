@@ -32,4 +32,7 @@ public class Constants {
     public final static String Uk_Path_Name = "";
 
     public final static String LibSiteSo = "/home/fleet/lib64/libSiteManager.so";
+
+    public final static int connectTimeOutMillis = 12000;
+    public final static int readTimeOutMillis = 12000;
 }

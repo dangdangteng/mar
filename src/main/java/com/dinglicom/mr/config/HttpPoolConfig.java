@@ -16,7 +16,7 @@ import org.springframework.context.annotation.Configuration;
 
 @Log
 @Configuration
-public class HttpPool {
+public class HttpPoolConfig {
 
     @Bean
     public HttpClient httpClient(){

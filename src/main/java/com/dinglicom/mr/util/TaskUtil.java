@@ -10,7 +10,6 @@ import com.dingli.domain.ItemAttributeVal;
 import com.dingli.domain.StatisticalReportRequest;
 import com.dinglicom.mr.constant.Constants;
 import com.dinglicom.mr.entity.DecodeFileEntity;
-import com.dinglicom.mr.entity.ReportKidJobEntity;
 import com.dinglicom.mr.entity.SourceFileEntity;
 import com.dinglicom.mr.entity.TaskConfigEntity;
 import lombok.extern.java.Log;
@@ -134,7 +133,7 @@ public class TaskUtil {
      * @return
      * @throws Exception
      */
-    public static StatisticalReportRequest getStatisticalReportRequestForII(TaskConfigEntity taskConfigEntity, List<String> relist, ReportDto reportDto, int id) throws Exception {
+    public static StatisticalReportRequest getStatisticalReportRequestForII(TaskConfigEntity taskConfigEntity, List<String> relist, String reportDto, int id) throws Exception {
         TaskConfigEntity taskConfigEntity1 = taskConfigTm(taskConfigEntity);
         String exin = taskConfigEntity1.getTempPath() + DateUtils.longTimeToDateTimeByJodaString() + File.separator + id + File.separator;
         String ResultFile = exin + "report_2_" + UUIDUtils.getUUIDStr() + ".uk";
@@ -143,12 +142,14 @@ public class TaskUtil {
         log.info("结果文件生成路径,生成成功!");
         String TempFilePath = exin;
 
-        String templateFileName = reportDto.getReportItem().getXmlTemplateFile();
+        String templateFileName = reportDto;
         log.info(templateFileName + "-------------------II级别任务");
         String configFileName = taskConfigEntity1.getConfigPath();
         String filePath = exin;
         CommonAttributeVal commonAttributeVal = new CommonAttributeVal(ResultFile, TempFilePath);
-        ItemAttributeVal itemAttributeVal = new ItemAttributeVal((ArrayList) relist);
+        ArrayList alist = new ArrayList();
+        alist.addAll(relist);
+        ItemAttributeVal itemAttributeVal = new ItemAttributeVal(alist);
         StatisticalReportRequest elementAttribute = new StatisticalReportRequest(commonAttributeVal, itemAttributeVal, templateFileName, configFileName, filePath, id + "");
         return elementAttribute;
     }
@@ -157,31 +158,28 @@ public class TaskUtil {
      * report 简易报表
      *
      * @param taskConfigEntity
-     * @param reportKidJobEntity
-     * @param reportDto
+     * @param resulteFile
+     * @param xmlTmp
      * @param id
      * @return
      * @throws Exception
      */
-    public static StatisticalReportRequest getStatisticalReportRequestForIII(TaskConfigEntity taskConfigEntity, ReportKidJobEntity reportKidJobEntity, ReportDto reportDto, int id) throws Exception {
+    public static StatisticalReportRequest getStatisticalReportRequestForIII(TaskConfigEntity taskConfigEntity, String resulteFile, String xmlTmp, int id) throws Exception {
         TaskConfigEntity taskConfigEntity1 = taskConfigTm(taskConfigEntity);
-        if (reportKidJobEntity.getResponse() == null) {
-            return null;
-        }
         String exin = taskConfigEntity1.getResultPath() + DateUtils.longTimeToDateTimeByJodaString() + File.separator + id + File.separator;
         String ResultFile = exin + "sjdl_report.xlsx";
         MakeDir.makeDir(exin);
         String cexin = taskConfigEntity1.getTempPath() + DateUtils.longTimeToDateTimeByJodaString() + File.separator + id + File.separator;
         String TempFilePath = cexin;
         MakeDir.makeDir(cexin);
-        String templateFileName = reportDto.getReportItem().getXmlTemplateFile();
+        String templateFileName = xmlTmp;
         log.info(templateFileName + "--------------------III级别任务");
         String configFileName = taskConfigEntity1.getConfigPath();
         String filePath = taskConfigEntity1.getTempPath() + DateUtils.longTimeToDateTimeByJodaString() + File.separator + id + File.separator;
         MakeDir.makeDir(filePath);
         CommonAttributeVal commonAttributeVal = new CommonAttributeVal(ResultFile, TempFilePath);
         ArrayList list = new ArrayList();
-        list.add(reportKidJobEntity.getResponse());
+        list.add(resulteFile);
         ItemAttributeVal itemAttributeVal = new ItemAttributeVal(list);
         StatisticalReportRequest elementAttribute = new StatisticalReportRequest(commonAttributeVal, itemAttributeVal, templateFileName, configFileName, filePath, id + "");
         return elementAttribute;

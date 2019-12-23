@@ -1,7 +1,7 @@
 package com.dinglicom.mr.task;
 
 import com.dingli.cloudunify.core.response.Response;
-import com.dinglicom.mr.config.HttpPool;
+import com.dinglicom.mr.config.HttpPoolConfig;
 import com.dinglicom.mr.entity.JobMessageListenerEntity;
 import com.dinglicom.mr.feign.CloudUnifyRedisFeign;
 import com.dinglicom.mr.handle.HandleContext;
@@ -32,7 +32,7 @@ public class ETListenEarth {
     private CloudUnifyRedisFeign cloudUnifyRedisFeign;
 
     @Autowired
-    private HttpPool httpPool;
+    private HttpPoolConfig httpPoolConfig;
 
     @Autowired
     private HandleContext handleContext;
@@ -41,7 +41,7 @@ public class ETListenEarth {
     private void listenEarth() throws Exception{
         log.info("master: 我5分钟观察你一次.");
         log.info("work: 不要不要人家会害羞的....");
-        HttpClient httpClient = httpPool.httpClient();
+        HttpClient httpClient = httpPoolConfig.httpClient();
         //读数据库 做轮询发送http请求获取
         //是读取消息 移除 更新数据库状态
         Iterable<JobMessageListenerEntity> all = jobMessageListenerRepository.findAll();

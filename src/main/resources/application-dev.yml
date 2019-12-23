@@ -6,18 +6,18 @@ spring:
   datasource:
     type: com.zaxxer.hikari.HikariDataSource
     driver-class-name: com.mysql.cj.jdbc.Driver
-    #url: jdbc:mysql:///172.16.23.151:8066/fleet_test?useUnicode=true&characterEncoding=UTF-8&serverTimezone=UTC
-    url: jdbc:mysql://172.16.23.151:8066/fleet_test?serverTimezone=UTC&characterEncoding=UTF-8
+    url: jdbc:mysql://172.16.23.151:8066/fleet_test?useUnicode=true&characterEncoding=UTF-8&serverTimezone=Asia/Shanghai
     username: root
     password: 123456
     hikari:
       minimum-idle: 10
-      idle-timeout: 180000
-      maximum-pool-size: 30
+      idle-timeout: 30000
+      maximum-pool-size: 60
       auto-commit: true
-      pool-name: dingli-hikari
-      max-lifetime: 1800000
+      pool-name: sgssb-hikari
+      max-lifetime: 60000
       connection-timeout: 30000
+      connection-test-query: SELECT 1
   jpa:
     database-platform: org.hibernate.dialect.MySQL5Dialect
   boot:
@@ -49,6 +49,8 @@ eureka:
     fetch-registry: true
   instance:
     prefer-ip-address: true
+    lease-expiration-duration-in-seconds: 10
+    lease-renewal-interval-in-seconds: 5
 #支持配置
 import:
     url: 172.16.23.151
@@ -63,3 +65,4 @@ async:
     maxPoolSize: 32
     keepAliveSeconds: 300
     queueCapacity: 2048
+#
