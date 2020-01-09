@@ -51,7 +51,7 @@ public class JobSplitController {
     public MessageCode test(@RequestParam Long id) throws Exception {
         Optional<DecodeFileEntity> byId = decodeFileRepository.findById(id);
         if (byId.get().getId() == id){
-            MessageCode ddib = dDiBJobService.ddib(id, byId.get().getFileName(), byId.get().getPort(), 10);
+            MessageCode ddib = dDiBJobService.ddib(byId.get(), byId.get().getFileName(), byId.get().getPort(), 10);
             return ddib;
         }
         return new MessageCode(0,"id : 输入有误");

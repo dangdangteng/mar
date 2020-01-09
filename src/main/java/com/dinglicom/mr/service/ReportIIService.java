@@ -142,16 +142,6 @@ public class ReportIIService {
         return new MessageCode(1, "1级任务全部完成，2级任务已经下发。。。");
     }
 
-    public void Error(String key, String id) throws Exception{
-        Response stringByKey = cloudUnifyRedisFeign.getStringByKey(key);
-        Response<Long> longResponse = cloudUnifyRedisFeign.incrNum(id + "F");
-        ObjectMapper mapper = new ObjectMapper();
-        ReportKidJobEntity reportKidJobEntity = mapper.readValue(stringByKey.getData().toString(), ReportKidJobEntity.class);
-        log.info("rkje:" + reportKidJobEntity.toString());
-        ReportKidJobEntity save = reportKidJobRepository.save(reportKidJobEntity);
-        log.info(" " + save.toString());
-    }
-
     public MessageCode iIReportDo(String id, List<String> strings, String xmlTem) throws Exception {
         Optional<TaskConfigEntity> byId = taskConfigRepository.findById(300);
         List<String> collect = strings.parallelStream().filter(s -> {

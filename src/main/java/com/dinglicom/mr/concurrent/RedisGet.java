@@ -23,9 +23,7 @@ public class RedisGet implements Callable<Response<String>> {
 
     @Override
     public Response<String> call() throws Exception {
-        logger.info("并发执行redis方法调用");
         Response<String> stringByKey = cloudUnifyRedisFeign.getStringByKey(key);
-        logger.info("这个不是空" + stringByKey.toString());
         return stringByKey;
     }
 }

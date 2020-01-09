@@ -8,6 +8,7 @@ import org.springframework.data.repository.Repository;
 import org.springframework.data.repository.query.Param;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
 import java.util.Optional;
 
 public interface JobMessageListenerRepository extends CrudRepository<JobMessageListenerEntity, Long>, Repository<JobMessageListenerEntity, Long> {
@@ -28,4 +29,6 @@ public interface JobMessageListenerRepository extends CrudRepository<JobMessageL
     int updateJobMessageListenerEntity(@Param("iWorkIp") String iWorkIp, @Param("iWorkPort") Integer iWorkPort, @Param("jobMessage") String jobMessage);
 
     void deleteByIworkIpAndIworkPort(String iWorkIp, Integer iWorkPort);
+
+    List<JobMessageListenerEntity> findAll();
 }

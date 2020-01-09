@@ -1,0 +1,286 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--DecodedPath：解码文件存放路径；
+	TempFilePath：统计临时文件存放路径；
+	ConfigFile：只针对传统报表生效，传给数据集的统计配置文件；
+	TemplateFile：报表模板名称；生成结果文件名称；
+	OnlySaveLayer3：是否只保存层三数据(True/false) 
+	StructFilterID：不存储的结构体id，多个结构体之间用逗号分隔，如果不配置全存；
+	Version：报表版本号-->
+<Report Id="0x21100" DecodedPath="D:\DecodeData\" TempFilePath="D:\WorkData\Pilot\Dev\Bin\TempData" ConfigFile="D:\WorkData\Pilot\Dev\Bin\Navigator.ini" TemplateFile="D:\全网覆盖普查（带图）.xls" ResultFile="D:\全网覆盖普查（带图）20121029.xls" TrafficClassType="-1" OnlySaveLayer3="false" StructFilterID="" Version="2.0">
+	<!--场景定义-->
+	<Scenes>
+		<!--Type:场景类型。目前分为4类：
+		1:Customer（缺省,可为空）Source：可指定其来源的场景，多个用逗号分隔，如"A,B"；
+		2:Operator; 按运营商分场景；
+		3:FileNameRules: 按log文件名的命名规则分场景； Regular 正则表达式定义的场景，从文件名识别场景分组 
+		4:PathLevel: 按文件的路径级次分场景。如果有多级路径，则要设置 RootPath 属性, 以实现按多级场景汇总的统计
+		5:CustomLevel:按照自定义等级字符串分场景。用于平台按项目名称的级次汇总，按设备汇总-->
+		<!--CreateEmptyScene:如果数据为空，是否创建空场景，默认为False-->
+		<!--Customer场景-->
+		<!--DataFilterExpression：数据筛选表达式，根据条件筛选当前数据是否参与指标统计。
+			函数：
+				DataBaseInfoFilter：数据基础信息过滤，暂时只有一个入参（字符串类型）：'TotalTestMileage'数据总里程；'TotalTestTime'数据总时长
+				ParameterFilter：参数信息过滤，暂时只有3个入参（1、参数Key；2、统计类型，采样点/时长/里程；3、统计模式，平均值/最大值/最小值/总值/总个数）-->
+		<Scene Name="TM3" ID="1" CreateEmptyScene="False"  DataFilterExpression="DataBaseInfoFilter('TotalTestMileage')&gt;2000 and ParameterFilter(0x7F060B02,'Sample','Average')&gt;0" >
+			<!-- DataSourece定义Rcu/ddib等文件作数据源，多个Data -->
+			<DataSourece>
+			    <!-- Data定义一个数据文件 -->
+				<Data>
+					<!-- DecryptFile 密钥skf文件-->
+					<Item Port="2" FileName="D:\rcu\上传-3.rcu" DeviceModel="Innofidei Rapid MD2100" Ip="192.168.0.1" DecryptFile="D:\rcu\上传-3.skf"/>
+				</Data>
+				<!-- Data里面定义多个文件，表示配对关系 -->
+				<Data>
+					<!-- Data里定义的源文件，表示该组文件之间具有业务关联的匹配关系，如主被叫，短信等 -->
+					<Item Port="2" FileName="D:\rcu\上传-2.ddib" DeviceModel="Innofidei Rapid MD2100" Ip="192.168.0.1"/>
+					<Item Port="3" FileName="D:\rcu\上传-3.ddib" DeviceModel="Innofidei Rapid MD2100" Ip="192.168.0.1"/>
+					<Item Port="4" FileName="D:\rcu\上传-4.ddib" DeviceModel="Innofidei Rapid MD2100" Ip="192.168.0.1"/>
+				</Data>
+				<!--DataBase定义了数据库连接信息,具体用法请参照"数据库报表"样式-->
+				<DataBase Name="PlanningData" Link="Provider=SQLITE;Path=D:\工作文档\单站测试\文档\测试数据\Site.UK"/>
+			</DataSourece>
+		</Scene>
+		<!--Operator场景:根据运营商分场景;目前按照数据中出现的MCC/MNC组合来区分(占用时长/业务发生在哪个组合下)-->
+		<!--Parent:属性在自动扩展场景时有效，如果为false，表示识别出的子场景作为父场景，如果为true，则场景的父子关系不变，默认值为True-->
+		<Scene Name="按运营商分场景" Type="Operator" ID="1" Parent="false">
+			<!--CreateEmptyScene:是否创建空场景，如果值为true,则会补充没有数据的场景记录，在报表显示的时候，场景记录能对齐-->
+			<SubScenes CreateEmptyScene="true">
+				<!--Default:是否缺省场景，如果Log不匹配任何子场景，则归属于该场景,(默认值False)-->
+				<SubScene Name="CMCC" ID="101" Default="True">
+					<Condition MCC="460" MNC="00"/>
+					<Condition MCC="460" MNC="02"/>
+				</SubScene>
+				<SubScene Name="中国电信" ID="102">
+					<Condition MCC="460" MNC="03"/>
+					<Condition Expression="Parameter(0x7F060D14)=460 AND Parameter(0x7F060D15)=03"/>
+				</SubScene>
+				<SubScene Name="中国联通" ID="103">
+					<Condition MCC="460" MNC="01"/>
+				</SubScene>
+			</SubScenes>
+			<DataSource/>
+		</Scene>
+		<!--FileNameRules场景:根据log的文件名命名规则分场景-->
+		<Scene Name="按Log文件名命名规则分场景" Type="FileNameRules" ID="1" Regular="[^\_%s]\_[语音]\_[^\_%s]\_[^\_%s]\_[\sn(\_)?]\_[\momt主叫|被叫]\_[^\_%s]">
+			<DataSource/>
+		</Scene>
+		<!--PathLevel场景:根据指定的RootPath根目录，按目录的级次关系汇总指标。此种情况DataSource定义的文件或路径，必须在RootPath根目录下-->
+		<Scene Name="按Log文件所在的路径层次分场景" Type="PathLevel" ID="1" RootPath="E:\RCU\按测试点汇总">
+			<DataSource Path="E:\RCU\按测试点汇总\*.rcu" Port="2|3"/>
+		</Scene>
+		<!--CustomLevel场景:根据数据节点指定的"LevelStr"关系汇总指标，LevelInfo:用于界面控制等级信息。-->
+		<Scene Name="按自定义层次分场景" Type="CustomLevel" LevelInfo="Project:3" ID="1">
+			<DataSource>
+				<!--LevelStr：数据汇总的级次字符串；上级在最前，各级次间用“\”分隔-->
+				<Data>
+					<Item Port="2" FileName="D:\rcu\上传-1.rcu" LevelStr="陕西省\西安市\福银高速"/>
+				</Data>
+				<Data>
+					<Item Port="2" FileName="D:\rcu\上传-2.rcu" LevelStr="陕西省\西安市\包茂高速"/>
+				</Data>
+				<Data>
+					<Item Port="2" FileName="D:\rcu\上传-3.rcu" LevelStr="陕西省\西安市\连霍高速"/>
+				</Data>
+			</DataSource>
+		</Scene>
+	</Scenes>
+	<!--过滤功能描述了一系列的条件（或条件组合），ReportElement所定义的指标，均需满足该条件的定义-->
+	<Filter>
+		<!--支持过滤器文件。为了兼容处理，还单独支持时间过滤、区域过滤两种类型。各个类型条件间取与的关系-->
+		<FilterFile>
+			<!--通用过滤器文件-->
+			<FileName>F:\Data\RCUData\联通四网对比测试数据\09上半年\保定数据\保定区域过滤器.xml</FileName>
+		</FilterFile>
+		<TimeFilter>
+			<!--多个时间条件之间是或的关系-->
+			<!--时间为1970年1月1日以来的微秒数（或秒数），按照UTC时间来做判断-->
+			<Item TimeType="ComputerTime/HandsetTime/GPSTime" DateType="DateTime/Date/Time" BeginTime="1367607600000000" EndTime="1367611200000000"/>
+			<Item TimeType="ComputerTime/HandsetTime/GPSTime" DateType="DateTime/Date/Time" BeginTime="1367607600000000" EndTime="1367611200000000"/>
+		</TimeFilter>
+		<RegionFilter>
+			<!--多个区域条件之间是或的关系-->
+			<Region>F:\Data\RCUData\联通四网对比测试数据\09上半年\保定数据\保定区域1.zdf</Region>
+			<Region>F:\Data\RCUData\联通四网对比测试数据\09上半年\保定数据\保定区域.kml</Region>
+		</RegionFilter>
+	</Filter>
+	
+	<!--分组统计结果，支持按区域(Region)、时间(Time)、参数表达式和业务(KPI)、采样点区间(PointSection)、过滤器6类分组模式-->
+	<!--注意***需要二次统计的指标，在报表配置有分组统计的情况时，主场景名不能为空，即主场景需要增加场景名称***-->
+	<Groups>
+		<!--分组统计输出结果为各个组条件下的不同指标-->
+		<!--Type：支持的分组类型，包括：Region/Time/KPI，其中KPI分类包括了字段、业务属性-->
+		<!--Auto：是否支持根据KPI的离散值自动分组-->
+		<!--Range：分组统计适用范围，默认值：All。All:全局分组，针对所有指标生效，统计项可以忽略GroupName属性；Part:局部分组，统计项需要通过GroupName(分组名)关联(逗号分隔多个分组)-->
+		<Group Name="1" Type="Region" Range="All">
+			<!--Type：区域过滤类型，缺省状态File类型。
+				1、File区域文件类型；
+				2、Province按省份分区域；
+				3、City按城市分区域；
+				4、ProvinceAndCity按省份加城市分区域-->
+			<Region Type="File" File="D:\1.kml"/>
+		</Group>
+		<!--Alias：别名，用于特定需求需要从分组名称中提取某些信息时使用-->
+		<Group Name="1" Type="Region" Range="Part" Alias="区域名称-道路名称-道路级别">
+			<Region Type="File" File="D:\21.kml"/>
+			<Region Type="File" File="D:\22.kml"/>
+		</Group>
+		<Group Name="2" Auto="True" Type="Region">
+			<Region Type="File" File="D:\21.kml"/>
+			<Region Type="File" File="D:\22.kml"/>
+		</Group>
+		<!--自动按城市/省份分组（暂时只支持按省份自动区域分组）-->
+		<Group Name="2" Auto="True" Type="Region">
+			<Region Type="Province" Province="广东省"/>
+			<Region Type="Province" Province="广西省"/>
+		</Group>
+		<Group Name="2" Auto="True" Type="Region">
+			<Region Type="City" City="珠海市"/>
+			<Region Type="City" City="广州市"/>
+		</Group>
+		<Group Name="2" Auto="True" Type="Region">
+			<Region Type="ProvinceAndCity" ProvinceAndCity="广东省-珠海市"/>
+			<Region Type="ProvinceAndCity" ProvinceAndCity="广东省-广州市"/>
+		</Group>
+		<!--按时间分组，多个条件是或的关系-->
+		<Group Name="3" Type="Time">
+			<!--时间类型TimeType：0:信令时间；1:电脑时间；2:GPS时间-->
+			<!--日期类型DateType:1默认；2按照给定时间段的日期过滤；3按照给定时间段的时间过滤 -->
+			<Item TimeType="ComputerTime/HandsetTime/GPSTime" DateType="DateTime/Date/Time" BeginTime="1367607600000000" EndTime="1367611200000000"/>
+			<Item TimeType="ComputerTime/HandsetTime/GPSTime" DateType="DateTime/Date/Time" BeginTime="1367607600000000" EndTime="1367611200000000"/>
+		</Group>
+		<Group Name="33" Type="KPI">
+			<!--时间类型TimeType：0:信令时间；1:电脑时间；2:GPS时间-->
+			<!--日期类型DateType:1默认；2按照给定时间段的日期过滤；3按照给定时间段的时间过滤 -->
+			<TimeCondition TimeType="ComputerTime/HandsetTime/GPSTime" DateType="DateTime/Date/Time" BeginTime="1367607600000000" EndTime="1367611200000000" Name="AAA"/>
+			<TimeCondition TimeType="ComputerTime/HandsetTime/GPSTime" DateType="DateTime/Date/Time" BeginTime="1367607600000000" EndTime="1367611200000000" Name="BBB"/>
+		</Group>
+		<!--按参数条件分组，多个条件是与的关系-->
+		<Group Name="4" Type="KPI">
+			<ParamCondition Key="2131099664" Expression="=1|2" Name="A" MsgFilter="false"/>
+			<ParamCondition Key="0x7F060044" Expression="4" Name="B" MsgFilter="false"/>
+			<ParamCondition Key="0x7F060047" Expression="&lt;=-3" Name="C" MsgFilter="false"/>
+		</Group>
+		<!--按结构体字段分组，暂时只支持同一个结构体中的多个字段条件进行分组，多个条件是与的关系。-->
+		<!--结构体字段分组，先阶段主要运用于Scanner小区统计报表-->
+		<Group Name="44" Auto="True" Type="KPI">
+			<ParamCondition Key="0x7F060E30" Name="EARFCN" IsDiscrete="True" MsgFilter="True" StructProperty="MAC_UL_TRANSPORT_BLOCK_SAMPLE.BSR_EVENT"/>
+			<ParamCondition Key="0x7F060E30" Name="PCI" IsDiscrete="True" MsgFilter="True" StructProperty="MAC_UL_TRANSPORT_BLOCK_SAMPLE.BSR_EVENT"/>
+			<ParamCondition Key="0x7F060E30" Name="CellID" IsDiscrete="True" MsgFilter="True" StructProperty="MAC_UL_TRANSPORT_BLOCK_SAMPLE.BSR_EVENT"/>
+		</Group>
+		<!--自动分组,组名为参数的离散值，支持多个离散参数组合的自动分组-->
+		<Group Name="5" Auto="True" Type="KPI">
+			<ParamCondition Key="0x7F060D15" Name="MNC(运营商标识)" IsDiscrete="True" MsgFilter="false"/>
+		</Group>
+		<!--按业务KPI分组-->
+		<!--自动分组,组名为业务属性的离散值（注意有字符串）-->
+		<!--ObtainNetType缺省值为所有网络(-1)； ResultType缺省值为除去抛掉的所有业务(-2)；Value:数据集统计需要定义的条件码，默认为(-9999)-->
+		<Group Name="55" Auto="True" Type="KPI">
+			<BSStatProperty SPID="4097" Statistics="130" Value="-9999" ObtainNetType="-1" ResultType="-2"/>
+		</Group>
+		<Group Name="6" Type="KPI">
+			<BSStatProperty SPID="2" Statistics="130" Value="-9999" Expression="1|2" ObtainNetType="-1" ResultType="-2"/>
+		</Group>
+		<Group Name="7" Type="KPI">
+			<BSStatProperty SPID="2" Statistics="130" Value="-9999" Expression="&lt;=200" ObtainNetType="-1" ResultType="-2"/>
+		</Group>
+		<!-- 按采样点区间文件分组，文件格式为：采样点区间个数(int)，区间1起始采样点序号(int)，区间1终止采样点序号(int)，区间2起始采样点序号，区间2终止采样点序号…… -->
+		<Group Name="8" Type="PointSection">
+			<PointSection File="D:\HandoverAnaly\Temp\20140903095014087\Cell3079.czf"/>
+		</Group>
+		<!--按事件属性分组-->
+		<!--Code：事件唯一标识；
+			ValueType：描述数据集事件属性类型，对应不同的事件属性类型数据集提供了不同的接口，
+				0-一bool：布尔类型；
+				1-一int：32位整数类型；
+				2-一int64：64位整数类型；
+				3-一double：双精度浮点类型；
+				4-一string：字符串类型；
+				5-一struct：特殊结构；
+				6-一guid：GUID类型；
+				7-一xml：XML类型(string类型的延伸)；
+			PropertyIndex：属性索引号，相同类型的事件属性，对应数据集文档中定义的一个唯一索引号（参考《数据集事件属性说明文档.doc》定义）。-->
+		<Group Name="9" Type="EventProperty">
+			<EventProperty Code="0x019F" ValueType="xml" PropertyIndex="0"/>
+		</Group>
+		<!--按照通用过滤器分组-->
+		<Filter/>
+	</Groups>
+	<!--bin条件的定义，具体的指标如果要按bin统计，则需要引用该条件-->
+	<Bins>
+		<!-- Mode: 栅格类型, 包括Time,Message,Distance,Grid -->
+		<!-- ID: Bin ID 用于在UK中唯一标识一个BIN条件-->
+		<!-- Value: 栅格大小 -->
+		<!-- Name: 栅格名称 统计项与Bin的关连, 使用此属性-->
+		<!-- Merge: 是否合并栅格 -->
+		<!-- ValueType: 值类型, 包括Average, Max, Min -->
+		<Bin Mode="Grid" ID="1" Value="50" Name="Grid50" Merge="True" ValueType="Average"/>
+		<!--FilterConditions：过滤条件(暂时只支持参数过滤)
+			ParamFilter：参数过滤条件
+			MsgFilter：默认False-->
+		<Bin Mode="Grid" Value="20" Name="Bin20" Merge="true" ValueType="Average" ID="1">
+			<FilterConditions>
+				<ParamFilter Key="0x7F06001C" Expression="=1" Name="band=1" MsgFilter="False"/>
+			</FilterConditions>
+		</Bin>
+	</Bins>
+	<!--常量定义, 一般在请求创建时赋值。脚本定义中可以通过{Name}的方式引用。-->
+	<!--一些内部常量无需定义，可直接通过{:Name}方式引用，如场景ID：{:SceneId}，ConditionID：{:ConditionID}，内部基站数据库别名：{:UKSite}-->
+	<Consts>
+		<Const Name="TestSite" Value="鼎利通信"/>
+	</Consts>
+	<!--通用基站定义-->
+	<Sites>
+		<!--FileName:支持各类型文件；-->
+		<!--Network:基站库的网络类型，针对txt/xlsx：可指定网络，如果不指定，则必须配置"Network"字段对应的别名，取值(GSM,CDMA,EVDO,WCDMA,TDSCDMA,LTE)；针对uk文件无效-->
+		<!--Field:针对txt/xlsx：可定义字段的映射关系；如果不指定，则按默认字符处理。参见前后台默认的字段标识-->
+		<Site FileName="D:\abc.uk/txt/xlsx" Network="LTE">
+			<!--Name：字段名，详见下面的列举：-->
+			<!--SiteId,SectorId,CellId,SiteName,CellName,NetType,Longitude,Latitude,Frequency,Scrambler,Azimuth,HalfPowerAngel,LAC,IsIndoor-->
+			<!--Alias：基站数据库字段对应的别名映射关系，可有多个别名，之间用";"分隔-->
+			<Field Name="CellName" Alias="Cell_Name;小区名;CName"/>
+			<Field Name="SiteName" Alias="Site Name;基站名"/>
+			<Field Name="Frequency" Alias="EARFCN;频点"/>
+			<Field Name="Network" Alias="NetWorkType;网络类型"/>
+		</Site>
+	</Sites>
+	<ReportElement>
+		<!--一SumMode 数据的汇总统计模式; 针对子场景(虚拟场景/分组统计), 有两种特殊的汇总模式: "SummaryOnlyTotal", "SummaryOnlySub"
+			SummaryOnlyTotal: 只输出原始总场景, 不输出子场景; SummaryOnlySub: 不输出总场景, 只输出子场景.-->
+		<BaseInfos>
+			<!--参见基础信息订单样式-->
+		</BaseInfos>
+		<Parameters>
+			<!--参见参数统计订单样式-->
+		</Parameters>
+		<Businesses>
+			<!--参见业务统计订单样式-->
+		</Businesses>
+		<Analysises>
+			<!--参见分析项订单样式-->
+		</Analysises>
+		<Calculates>
+			<!--参见计算式统计订单样式-->
+		</Calculates>
+		<Commonds>
+			<!--参见命令行统计订单样式-->
+			<Commond Name="日志名称" Method="GetCaption" Scene="TM3"/>
+			<Commond Name="RSRP2" Method="Calculate" Parameter="RSRP+2" Scene="TM3"/>
+		</Commonds>
+		<DetailExports>
+			<!--参见详情导出订单样式-->
+		</DetailExports>
+		<MergerTables>
+			<!--参见合并表样式-->
+		</MergerTables>
+		<Styles>
+			<!--参见模板样式-->
+		</Styles>
+		<Reports>
+			<!--参见嵌入式报表订单样式-->
+			<Report/>
+		</Reports>
+	</ReportElement>
+	<StatisticConfig>
+		<!--参见统计配置定义.xml-->
+	</StatisticConfig>
+</Report>

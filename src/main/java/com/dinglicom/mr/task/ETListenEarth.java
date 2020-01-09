@@ -17,6 +17,8 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
+
 @Component
 @Log
 @Configuration
@@ -39,13 +41,13 @@ public class ETListenEarth {
 
     @Scheduled(fixedRate = 60000 * 5)
     private void listenEarth() throws Exception{
-        log.info("master: 我5分钟观察你一次.");
-        log.info("work: 不要不要人家会害羞的....");
+        log.info("master: ");
+        log.info("work: ");
         HttpClient httpClient = httpPoolConfig.httpClient();
         //读数据库 做轮询发送http请求获取
         //是读取消息 移除 更新数据库状态
-        Iterable<JobMessageListenerEntity> all = jobMessageListenerRepository.findAll();
-        all.forEach(jobMessageListenerEntity -> {
+        List<JobMessageListenerEntity> all = jobMessageListenerRepository.findAll();
+        all.parallelStream().forEach(jobMessageListenerEntity -> {
             // 执行请求，相当于敲完地址后按下回车。获取响应
             try {
                 String url = "http://" + jobMessageListenerEntity.getIworkIp() + ":" + jobMessageListenerEntity.getIworkPort() + "/actuator/info";
@@ -62,27 +64,28 @@ public class ETListenEarth {
                     // 移除监听数据 放弃监听
                     String jobMessage = jobMessageListenerEntity.getJobMessage();
                     // 信道信息处理
-                    String serviceId= jobMessage.substring(jobMessage.indexOf("|")+1,jobMessage.indexOf(":"));
                     try {
+                        String serviceId= jobMessage.substring(jobMessage.indexOf("|")+1,jobMessage.indexOf(":"));
                         handleContext.doJobAtNow(serviceId, jobMessage);
                     } catch (Exception e) {
                         e.printStackTrace();
+                    }finally{
+                        Response<Boolean> remove = cloudUnifyRedisFeign.remove(jobMessage);
+                        jobMessageListenerRepository.delete(jobMessageListenerEntity);
                     }
-                    //todo:
-                    Response<Boolean> remove = cloudUnifyRedisFeign.remove(jobMessage);
-                    jobMessageListenerRepository.delete(jobMessageListenerEntity);
                 }
             } catch (Exception e) {
                 String jobMessage = jobMessageListenerEntity.getJobMessage();
-                String serviceId = jobMessage.substring(jobMessage.indexOf("|") + 1, jobMessage.indexOf(":"));
+                //bug
                 try {
+                    String serviceId = jobMessage.substring(jobMessage.indexOf("|") + 1, jobMessage.indexOf(":"));
                     handleContext.doJobAtNow(serviceId, jobMessage);
                 } catch (Exception ez) {
                     ez.printStackTrace();
+                }finally{
+                    Response<Boolean> remove = cloudUnifyRedisFeign.remove(jobMessage);
+                    jobMessageListenerRepository.delete(jobMessageListenerEntity);
                 }
-                //todo:
-                Response<Boolean> remove = cloudUnifyRedisFeign.remove(jobMessage);
-                jobMessageListenerRepository.delete(jobMessageListenerEntity);
             }
         });
     }

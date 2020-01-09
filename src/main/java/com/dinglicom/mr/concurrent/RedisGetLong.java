@@ -22,9 +22,7 @@ public class RedisGetLong implements Callable<Response<Long>> {
 
     @Override
     public Response<Long> call() throws Exception {
-        logger.info("并发执行redis方法调用");
         Response<Long> longNum = cloudUnifyRedisFeign.getLongNum(key);
-        logger.info("这个不是空" + longNum.toString());
         return longNum;
     }
 }

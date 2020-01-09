@@ -35,6 +35,6 @@ public enum CErrorCodeEnum {
     }
 
     public static void main(String[] args) {
-        System.out.println(getMessage(2));
+        System.out.println(getMessage(6));
     }
 }

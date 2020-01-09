@@ -22,10 +22,18 @@ public class NumCompare {
         }
         return false;
     }
-
+    public static Integer multiplicationNum(int a,int b){
+        BigDecimal ab = new BigDecimal(a);
+        BigDecimal ba = new BigDecimal(b);
+        BigDecimal multiply = ab.multiply(ba);
+        int i = multiply.intValue();
+        return i;
+    }
     public static void main(String[] args) {
         //
-        Boolean aBoolean = doubleCompare(0, 6,0.2);
-        System.out.println(aBoolean);
+//        Boolean aBoolean = doubleCompare(0, 6,0.2);
+//        System.out.println(aBoolean);
+        Integer integer = multiplicationNum(5, 100000);
+    System.out.println(integer);
     }
 }

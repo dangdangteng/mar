@@ -46,11 +46,12 @@ public class JobStatusWriteSourceFileTableController {
         decodeFileEntity.setIsDelete(0);
         decodeFileEntity.setCreateDt(LocalDateTime.now());
         decodeFileEntity.setStartDt(LocalDateTime.now());
+        decodeFileEntity.setAreaIds("1");
         MessageCode<DecodeFileEntity> messageCode1 = decodeJobService.saveDecodeFile(decodeFileEntity);
         if (messageCode1.getCode() != 1 || messageCode1.getData() == null) {
             return messageCode1;
         }
-        MessageCode ddib = dDiBJobService.ddib(messageCode1.getData().getId(), decodeFileEntity.getFileName(), decodeFileEntity.getPort(), 10);
+        MessageCode ddib = dDiBJobService.ddib(messageCode1.getData(), decodeFileEntity.getFileName(), decodeFileEntity.getPort(), 10);
         return ddib;
     }
 }

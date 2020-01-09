@@ -61,4 +61,10 @@
 > rabbit mq 
 
 ##
+> 启动： 
+>
 > java -Xms1024m -Xmx1024m -XX:PermSize=256m -XX:MaxPermSize=512m -XX:MaxNewSize=512m -jar -Dserver.port=45632 -Dmanagement.server.port=45632 worker23451.jar
+>
+>远程调试监控：
+>
+>java -agentlib:jdwp=transport=dt_socket,server=y,suspend=n,address=6001 -jar mar.jar

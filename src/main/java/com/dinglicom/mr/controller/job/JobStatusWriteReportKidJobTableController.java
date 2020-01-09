@@ -29,11 +29,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.IOException;
 import java.time.LocalDateTime;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ForkJoinPool;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -70,6 +67,12 @@ public class JobStatusWriteReportKidJobTableController {
 
     @RequestMapping(value = "/web", method = RequestMethod.POST)
     public Response reportJob(@RequestBody ReportDto reportDto, Integer id, Integer prority) throws Exception {
+        Map map = new HashMap(16);
+        MessageCode messageCode = reportJobService.reportJobI(reportDto, id, prority == null ? 50 : prority);
+        return ResponseGenerator.genSuccessResult(messageCode.getData());
+    }
+    @RequestMapping(value = "/webmap", method = RequestMethod.POST)
+    public Response reportJob(@RequestBody ReportDto reportDto, Integer id, Integer prority, Map<String,String> map) throws Exception {
         MessageCode messageCode = reportJobService.reportJobI(reportDto, id, prority == null ? 50 : prority);
         return ResponseGenerator.genSuccessResult(messageCode.getData());
     }
@@ -97,12 +100,16 @@ public class JobStatusWriteReportKidJobTableController {
         Response<Long> longResponse1 = cloudUnifyRedisFeign.decrNum(id + "IB");
         Response stringByKey = cloudUnifyRedisFeign.getStringByKey(key);
         Response remove = cloudUnifyRedisFeign.remove(key);
-        ReportKidJobEntity reportKidJobEntity = o.readValue(stringByKey.getData().toString(), ReportKidJobEntity.class);
         if (stateCode != 2) {
-            reportKidJobEntity.setState(stateCode);
             Response<Long> longResponse = cloudUnifyRedisFeign.incrRanNum(id + "F", 200);
-            ReportKidJobEntity save = reportKidJobRepository.save(reportKidJobEntity);
-            log.info("保存移除到mysql:" + save.toString());
+            try{
+                ReportKidJobEntity reportKidJobEntity = o.readValue(stringByKey.getData().toString(), ReportKidJobEntity.class);
+                reportKidJobEntity.setState(stateCode);
+                ReportKidJobEntity save = reportKidJobRepository.save(reportKidJobEntity);
+                log.info("保存移除到mysql:" + save.toString());
+            }catch (Exception e){
+                log.info(e.toString());
+            }
         }
         if (longResponse1.getData() > 0) {
             log.info("还有合并任务");
@@ -125,10 +132,10 @@ public class JobStatusWriteReportKidJobTableController {
 //        Response<Boolean> delete = cloudUnifyRedisFeign.remove(id + "Saber");
         log.info("夜空中最闪亮的星..." + cowal.toString());
         if (cowal.size() == 1) {
-            MessageCode test = reportIIIService.IIIJobDoing(cowal.get(0).toString(), reportKidJobEntity.getException(), Integer.valueOf(id), key);
+            MessageCode test = reportIIIService.IIIJobDoing(cowal.get(0).toString(), cloudUnifyRedisFeign.getStringByKey(id+"xml").getData(), Integer.valueOf(id), key);
             return test;
         } else {
-            MessageCode messageCode = reportIIService.iIReportDo(id, cowal, reportKidJobEntity.getException());
+            MessageCode messageCode = reportIIService.iIReportDo(id, cowal, cloudUnifyRedisFeign.getStringByKey(id+"xml").getData());
             return messageCode;
         }
     }
@@ -157,7 +164,7 @@ public class JobStatusWriteReportKidJobTableController {
         return new MessageCode(1, reportKidJobEntity1.toString());
     }
 
-  public static void main(String[] args) throws IOException {
+  public static void main(String[] args) throws Exception {
       AtomicInteger a = new AtomicInteger(1);
       a.addAndGet(-1);
     System.out.println(a);
@@ -166,9 +173,16 @@ public class JobStatusWriteReportKidJobTableController {
     public MessageCode updateReportI(@RequestParam String key, @RequestParam String response, @RequestParam int stateCode) throws Exception {
         String id = key.substring(0, key.indexOf("|"));
         Response<Long> num = cloudUnifyRedisFeign.decrNum(id + "IA");
+        Response<String> stringByKey = cloudUnifyRedisFeign.getStringByKey(key);
+        log.info("_____________________kanzheli_______________________"+stringByKey.getData());
         log.info("new num:" + num.getData().toString());
         if (stateCode != 2) {
-            reportIIService.Error(key, id);
+            Response<Long> longResponse = cloudUnifyRedisFeign.incrNum(id + "F");
+            ObjectMapper mapper = new ObjectMapper();
+            ReportKidJobEntity reportKidJobEntity = mapper.readValue(stringByKey.getData(), ReportKidJobEntity.class);
+            log.info("rkje:" + reportKidJobEntity.toString());
+            ReportKidJobEntity save = reportKidJobRepository.save(reportKidJobEntity);
+            log.info(" " + save.toString());
         }
         ListenableFuture<Response<Long>> failNum = ListenPool().submit(new RedisGetLong(id + "F", cloudUnifyRedisFeign));
         ListenableFuture<Response<String>> allNum = ListenPool().submit(new RedisGet(id + "ALL", cloudUnifyRedisFeign));
@@ -178,13 +192,10 @@ public class JobStatusWriteReportKidJobTableController {
             ErrorListEntity save = errorListRepository.save(ErrorListEntity.builder().build().setTaskId(id).setTime(LocalDateTime.now()));
             return new MessageCode(0, "fail!", save);
         }
-        Response<String> stringByKey = cloudUnifyRedisFeign.getStringByKey(key);
         Response remove = cloudUnifyRedisFeign.remove(key);
         StringBuffer stringBuffer = new StringBuffer();
         if (num.getData() == 0) {
-            ObjectMapper o = new ObjectMapper();
-            ReportKidJobEntity reportKidJobEntity = o.readValue(stringByKey.getData(), ReportKidJobEntity.class);
-            MessageCode messageCode = reportIIService.IIReport(id, reportKidJobEntity.getException());
+            MessageCode messageCode = reportIIService.IIReport(id, cloudUnifyRedisFeign.getStringByKey(id+"xml").getData());
             return messageCode;
         }
         ReportTask reportTask = new ReportTask();

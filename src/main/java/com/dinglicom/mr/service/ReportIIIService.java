@@ -45,6 +45,8 @@ public class ReportIIIService {
         ListenableFuture<Response> allRemove = ListeningExecutorServiceUtil.ListenPool().submit(new RedisRemove(id + "ALL", cloudUnifyRedisFeign));
         ListenableFuture<Response> fRemove = ListeningExecutorServiceUtil.ListenPool().submit(new RedisRemove(id + "F", cloudUnifyRedisFeign));
         ListenableFuture<Optional<TaskConfigEntity>> task = ListeningExecutorServiceUtil.ListenPool().submit(new taskFindById(300L, taskConfigRepository));
+
+
         Futures.addCallback(saberRemove, new CallBackListenPool(),ListeningExecutorServiceUtil.threadPoolExecutor);
         Futures.addCallback(ibRemove, new CallBackListenPool(),ListeningExecutorServiceUtil.threadPoolExecutor);
         Futures.addCallback(allRemove, new CallBackListenPool(),ListeningExecutorServiceUtil.threadPoolExecutor);

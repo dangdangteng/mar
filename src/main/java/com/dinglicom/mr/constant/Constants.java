@@ -1,6 +1,5 @@
 package com.dinglicom.mr.constant;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -35,4 +34,6 @@ public class Constants {
 
     public final static int connectTimeOutMillis = 12000;
     public final static int readTimeOutMillis = 12000;
+
+    public final static String XML_PATH = "/home/fleet/xml";
 }

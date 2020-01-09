@@ -21,7 +21,6 @@ public class RedisRemove implements Callable<Response> {
 
     @Override
     public Response call() throws Exception {
-        logger.info("并发执行redis方法调用");
         Response stringByKey = cloudUnifyRedisFeign.remove(key);
         return stringByKey;
     }

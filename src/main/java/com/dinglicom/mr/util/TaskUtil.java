@@ -20,6 +20,8 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.stream.Collectors;
 
 
 @Log
@@ -117,11 +119,44 @@ public class TaskUtil {
             String ResultFile = exin + "report_1_" + UUIDUtils.getUUIDStr() + ".uk";
             log.info("1级别任务,文件存放路径: " + ResultFile);
             CommonAttributeVal commonAttributeVal = new CommonAttributeVal(ResultFile, TempFilePath);
-            ItemAttributeVal itemAttributeVal = new ItemAttributeVal(reportFileDto.getFileName(), String.valueOf(reportFileDto.getPort()));
+            ItemAttributeVal itemAttributeVal = new ItemAttributeVal(reportFileDto.getFileName(), String.valueOf(reportFileDto.getPort()), null);
             StatisticalReportRequest elementAttribute = new StatisticalReportRequest(commonAttributeVal, itemAttributeVal, templateFileName, configFileName, filePath, id + "");
             listStatisticalReportRequest.add(elementAttribute);
         });
         return listStatisticalReportRequest;
+    }
+
+    public static List<List<StatisticalReportRequest>> getStatisticalReportRequest(TaskConfigEntity taskConfigEntity, ReportDto reportDto, int id, List<String> sceneName) throws Exception {
+        TaskConfigEntity taskConfigEntity1 = taskConfigTm(taskConfigEntity);
+        if (reportDto.getData().size() < 0) {
+            return null;
+        }
+        String TempFilePath = taskConfigEntity1.getTempPath() + DateUtils.longTimeToDateTimeByJodaString() + File.separator + id + File.separator;
+        MakeDir.makeDir(TempFilePath);
+        String templateFileName = reportDto.getReportItem().getXmlTemplateFile();
+        log.info(templateFileName + "------------I级别任务");
+        String configFileName = taskConfigEntity1.getConfigPath();
+        String filePath = TempFilePath;
+        /**
+         *  端口号暂时没有判断异常情况
+         */
+        String exin = taskConfigEntity1.getTempPath() + DateUtils.longTimeToDateTimeByJodaString() + File.separator + id + File.separator;
+        boolean b = MakeDir.makeDir(exin);
+        log.info("生成文件路径!");
+        List<List<StatisticalReportRequest>> collect = sceneName.parallelStream().map(s -> {
+            List<StatisticalReportRequest> listStatisticalReportRequest = new CopyOnWriteArrayList<>();
+            reportDto.getData().parallelStream().forEach(reportFileDto -> {
+                //uk 存放路径
+                String ResultFile = exin + s + UUIDUtils.getUUIDStr() + ".uk";
+                log.info("1级别任务,文件存放路径: " + ResultFile);
+                CommonAttributeVal commonAttributeVal = new CommonAttributeVal(ResultFile, TempFilePath);
+                ItemAttributeVal itemAttributeVal = new ItemAttributeVal(reportFileDto.getFileName(), String.valueOf(reportFileDto.getPort()), s);
+                StatisticalReportRequest elementAttribute = new StatisticalReportRequest(commonAttributeVal, itemAttributeVal, templateFileName, configFileName, filePath, id + "");
+                listStatisticalReportRequest.add(elementAttribute);
+            });
+            return listStatisticalReportRequest;
+        }).collect(Collectors.toList());
+        return collect;
     }
 
     /**
@@ -186,18 +221,23 @@ public class TaskUtil {
     }
 
     public static void main(String[] args) {
-//        String s = " /home/fleet/fleetSwapDatas/swapTemps/decode/";
-//        //           12345678901234567890123456789012345678901234
-//        String a = "/";
-//        s.getBytes();
-//        if (s.length() > 0 && !"/".equals(s.charAt(s.length() - 1))) {
-//            System.out.println(File.separator.equals(s.charAt(s.length() - 1)));
-//            System.out.println(s.charAt(s.length() - 1));
-//            System.out.println(s.length());
-//            s += "/";
-//            System.out.println(s);
-//            System.out.println(s.charAt(s.length() - 1));
-////            byte[] byteData=Encoding.Default.GetBytes(cChar);
-//        }
+        List<String> a = new ArrayList();
+        a.add("1");
+        a.add("2");
+        List<String> b = new ArrayList();
+        b.add("a");
+        b.add("b");
+        b.add("c");
+        b.add("d");
+        b.add("e");
+        List<List<String>> t = new CopyOnWriteArrayList();
+        List<List<String>> collect = a.parallelStream().map(s -> {
+            List<String> test = new CopyOnWriteArrayList();
+            b.parallelStream().forEach(ss -> {
+                test.add(ss);
+            });
+            return test;
+        }).collect(Collectors.toList());
+        System.out.println(collect.toString());
     }
 }

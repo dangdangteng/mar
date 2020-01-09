@@ -122,17 +122,17 @@
 		<dependency>
 			<groupId>com.dingli.cloudunify.report</groupId>
 			<artifactId>decode</artifactId>
-			<version>2.2.5-RELEASE</version>
+			<version>2.2.11-RELEASE</version>
 		</dependency>
 		<dependency>
 			<groupId>com.dingli.cloudunify.report</groupId>
 			<artifactId>exportData</artifactId>
-			<version>2.2.5-RELEASE</version>
+			<version>2.2.11-RELEASE</version>
 		</dependency>
 		<dependency>
 			<groupId>com.dingli.cloudunify.report</groupId>
 			<artifactId>importdb</artifactId>
-			<version>2.2.5-RELEASE</version>
+			<version>2.2.11-RELEASE</version>
 			<exclusions>
 				<exclusion>
 					<artifactId>pub</artifactId>
@@ -144,7 +144,7 @@
 		<dependency>
 			<groupId>com.dingli.cloudunify.report</groupId>
 			<artifactId>pub</artifactId>
-			<version>2.2.5-RELEASE</version>
+			<version>2.2.11-RELEASE</version>
 		</dependency>
 		<!-- https://mvnrepository.com/artifact/org.apache.httpcomponents/httpclient -->
 		<dependency>
@@ -155,12 +155,12 @@
 		<dependency>
 			<groupId>com.dingli.cloudunify.report</groupId>
 			<artifactId>reportRequestHelper</artifactId>
-			<version>2.2.5-RELEASE</version>
+			<version>2.2.11-RELEASE</version>
 		</dependency>
 		<dependency>
 			<groupId>com.dingli.cloudunify.report</groupId>
 			<artifactId>statistic</artifactId>
-			<version>2.2.5-RELEASE</version>
+			<version>2.2.11-RELEASE</version>
 			<exclusions>
 				<exclusion>
 					<artifactId>dom4j</artifactId>

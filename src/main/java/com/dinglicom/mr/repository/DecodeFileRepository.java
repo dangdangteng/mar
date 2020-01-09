@@ -24,7 +24,7 @@ public interface DecodeFileRepository extends Repository<DecodeFileEntity, Long>
     @Override
     <S extends DecodeFileEntity> Iterable<S> saveAll(Iterable<S> entities);
 
-    DecodeFileEntity findById(int id);
+    Optional<DecodeFileEntity> findById(Long id);
 
     @Override
     List<DecodeFileEntity> findAll();
